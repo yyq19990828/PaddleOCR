@@ -32,3 +32,18 @@ paddleocr.egg-info/
 /deploy/android_demo/app/cache/
 test_tipc/web/models/
 test_tipc/web/node_modules/
+
+# yyq test files
+_test/*
+
+dataset/*
+!dataset/.gitkeep
+
+output_inference
+output_train
+
+pretrained_models/*
+!pretrained_models/.gitkeep
+
+# Ignore symbolic links
+*.lnk
