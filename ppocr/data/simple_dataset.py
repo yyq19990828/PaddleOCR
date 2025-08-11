@@ -42,7 +42,15 @@ class SimpleDataSet(Dataset):
         assert (
             len(ratio_list) == data_source_num
         ), "The length of ratio_list should be the same as the file_list."
-        self.data_dir = dataset_config["data_dir"]
+        
+        # Support multiple data directories
+        data_dir = dataset_config["data_dir"]
+        if isinstance(data_dir, str):
+            self.data_dir = [data_dir] * data_source_num
+        else:
+            self.data_dir = data_dir
+            assert len(self.data_dir) == data_source_num, \
+                "The length of data_dir list should be the same as the label_file_list."
         self.do_shuffle = loader_config["shuffle"]
         self.seed = seed
         logger.info("Initialize indexes of datasets:%s" % label_file_list)
@@ -64,7 +72,9 @@ class SimpleDataSet(Dataset):
                 if self.mode == "train" or ratio_list[idx] < 1.0:
                     random.seed(self.seed)
                     lines = random.sample(lines, round(len(lines) * ratio_list[idx]))
-                data_lines.extend(lines)
+                # Add data directory index to each line for multi-directory support
+                lines_with_dir = [(line, idx) for line in lines]
+                data_lines.extend(lines_with_dir)
         return data_lines
 
     def shuffle_data_random(self):
@@ -93,13 +103,13 @@ class SimpleDataSet(Dataset):
 
         while len(ext_data) < ext_data_num:
             file_idx = self.data_idx_order_list[np.random.randint(self.__len__())]
-            data_line = self.data_lines[file_idx]
+            data_line, dir_idx = self.data_lines[file_idx]
             data_line = data_line.decode("utf-8")
             substr = data_line.strip("\n").split(self.delimiter)
             file_name = substr[0]
             file_name = self._try_parse_filename_list(file_name)
             label = substr[1]
-            img_path = os.path.join(self.data_dir, file_name)
+            img_path = os.path.join(self.data_dir[dir_idx], file_name)
             data = {"img_path": img_path, "label": label}
             if not os.path.exists(img_path):
                 continue
@@ -118,14 +128,14 @@ class SimpleDataSet(Dataset):
 
     def __getitem__(self, idx):
         file_idx = self.data_idx_order_list[idx]
-        data_line = self.data_lines[file_idx]
+        data_line, dir_idx = self.data_lines[file_idx]
         try:
             data_line = data_line.decode("utf-8")
             substr = data_line.strip("\n").split(self.delimiter)
             file_name = substr[0]
             file_name = self._try_parse_filename_list(file_name)
             label = substr[1]
-            img_path = os.path.join(self.data_dir, file_name)
+            img_path = os.path.join(self.data_dir[dir_idx], file_name)
             data = {"img_path": img_path, "label": label}
             if not os.path.exists(img_path):
                 raise Exception("{} does not exist!".format(img_path))
@@ -166,8 +176,9 @@ class MultiScaleDataSet(SimpleDataSet):
     def wh_aware(self):
         data_line_new = []
         wh_ratio = []
-        for lins in self.data_lines:
-            data_line_new.append(lins)
+        for item in self.data_lines:
+            data_line_new.append(item)
+            lins, dir_idx = item
             lins = lins.decode("utf-8")
             name, label, w, h = lins.strip("\n").split(self.delimiter)
             wh_ratio.append(float(w) / float(h))
@@ -220,14 +231,14 @@ class MultiScaleDataSet(SimpleDataSet):
             img_width = properties[0]
             wh_ratio = None
 
-        data_line = self.data_lines[file_idx]
+        data_line, dir_idx = self.data_lines[file_idx]
         try:
             data_line = data_line.decode("utf-8")
             substr = data_line.strip("\n").split(self.delimiter)
             file_name = substr[0]
             file_name = self._try_parse_filename_list(file_name)
             label = substr[1]
-            img_path = os.path.join(self.data_dir, file_name)
+            img_path = os.path.join(self.data_dir[dir_idx], file_name)
             data = {"img_path": img_path, "label": label}
             if not os.path.exists(img_path):
                 raise Exception("{} does not exist!".format(img_path))
