@@ -1,0 +1,191 @@
+# PaddleOCR 推理配置文件模板
+# 该文件包含了所有可用的推理参数及其说明。
+# 您可以根据需要修改这些参数来配置您的推理过程。
+
+# --- 全局设置 ---
+Global:
+  # 是否使用GPU进行推理
+  use_gpu: true
+  # 是否使用XPU进行推理
+  use_xpu: false
+  # 是否使用NPU进行推理
+  use_npu: false
+  # 是否使用MLU进行推理
+  use_mlu: false
+  # 是否使用GCU（通用计算单元）
+  use_gcu: false
+  # 是否启用IR优化
+  ir_optim: true
+  # 是否使用TensorRT进行加速
+  use_tensorrt: false
+  # TensorRT的最小子图大小
+  min_subgraph_size: 15
+  # 推理精度，可选值为 "fp32", "fp16", "int8"
+  precision: "fp32"
+  # GPU显存使用限制（MB）
+  gpu_mem: 500
+  # 使用的GPU ID
+  gpu_id: 0
+  # 预测的批处理大小
+  max_batch_size: 10
+  # 待推理图片所在的文件夹路径
+  image_dir: ./doc/imgs/
+  # PDF文件要处理的页码数，0表示所有页
+  page_num: 0
+  # 是否启用MKL-DNN
+  enable_mkldnn: true
+  # CPU线程数
+  cpu_threads: 10
+  # 是否使用Paddle Serving进行部署
+  use_pdserving: false
+  # 是否在推理前进行预热
+  warmup: false
+  # 是否启用基准测试
+  benchmark: false
+  # 日志保存路径
+  save_log_path: ./log_output/
+  # 是否显示日志
+  show_log: true
+  # 是否使用ONNX进行推理
+  use_onnx: false
+  # ONNX推理提供者，例如 ["CUDAExecutionProvider"]
+  onnx_providers: []
+  # ONNX会话选项
+  onnx_sess_options: []
+  # 是否返回每个单词或汉字的边界框
+  return_word_box: false
+  # 可视化结果保存目录
+  draw_img_save_dir: ./inference_results/
+  # 是否保存裁剪的识别结果图片
+  save_crop_res: false
+  # 裁剪结果图片保存目录
+  crop_res_save_dir: ./output/
+  # 可视化字体路径
+  vis_font_path: ./doc/fonts/simfang.ttf
+  # 识别结果置信度阈值，低于此阈值的结果将被丢弃
+  drop_score: 0.5
+  # 是否使用多进程
+  use_mp: false
+  # 进程总数
+  total_process_num: 1
+  # 当前进程ID
+  process_id: 0
+
+# --- 文本检测 (det) ---
+Det:
+  # 检测算法，可选 "DB", "DB++", "EAST", "SAST", "PSE", "FCE", "CT"
+  det_algorithm: "DB"
+  # 检测模型文件路径
+  det_model_dir: null
+  # 输入图片长边的限制
+  det_limit_side_len: 960
+  # 限制类型，可选 "max", "min"
+  det_limit_type: "max"
+  # 输出的box类型，可选 "quad", "poly"
+  det_box_type: "quad"
+  
+  # DB算法相关参数
+  # DB后处理的二值化阈值
+  det_db_thresh: 0.3
+  # DB后处理的box阈值
+  det_db_box_thresh: 0.6
+  # DB后处理的反量化比例
+  det_db_unclip_ratio: 1.5
+  # 是否在DB的CML模块使用膨胀
+  use_dilation: false
+  # DB得分模式，可选 "fast", "slow"
+  det_db_score_mode: "fast"
+
+  # EAST算法相关参数
+  # EAST后处理的得分阈值
+  det_east_score_thresh: 0.8
+  # EAST后处理的覆盖阈值
+  det_east_cover_thresh: 0.1
+  # EAST后处理的NMS阈值
+  det_east_nms_thresh: 0.2
+
+  # SAST算法相关参数
+  # SAST后处理的得分阈值
+  det_sast_score_thresh: 0.5
+  # SAST后处理的NMS阈值
+  det_sast_nms_thresh: 0.2
+
+  # PSE算法相关参数
+  # PSE后处理的阈值
+  det_pse_thresh: 0
+  # PSE后处理的box阈值
+  det_pse_box_thresh: 0.85
+  # PSE后处理的最小区域面积
+  det_pse_min_area: 16
+  # PSE后处理的缩放比例
+  det_pse_scale: 1
+
+  # FCE算法相关参数
+  scales: [8, 16, 32]
+  alpha: 1.0
+  beta: 1.0
+  fourier_degree: 5
+
+# --- 文本识别 (rec) ---
+Rec:
+  # 识别算法，可选 "CRNN", "SRN", "RARE", "NETR", "SAR", "ViTSTR", "ABINet", "VisionLAN", "SPIN", "RobustScanner", "SVTR", "SVTR_LCNet", "RFL", "SATRN", "CPPD", "CPPDPadding", "PREN", "CAN", "LaTeXOCR", "ParseQ"
+  rec_algorithm: "SVTR_LCNet"
+  # 识别模型文件路径
+  rec_model_dir: null
+  # 识别图像是否需要反色 (仅CAN模型)
+  rec_image_inverse: true
+  # 识别模型输入图像尺寸，格式为 "C, H, W"
+  rec_image_shape: "3, 48, 320"
+  # 识别批处理数量
+  rec_batch_num: 6
+  # 最大文本长度
+  max_text_length: 25
+  # 字符字典文件路径
+  rec_char_dict_path: ./ppocr/utils/ppocr_keys_v1.txt
+  # 是否使用空格字符
+  use_space_char: true
+
+# --- 文本方向分类 (cls) ---
+Cls:
+  # 是否使用方向分类器
+  use_angle_cls: false
+  # 方向分类模型文件路径
+  cls_model_dir: null
+  # 方向分类模型输入图像尺寸，格式为 "C, H, W"
+  cls_image_shape: "3, 48, 192"
+  # 标签列表
+  label_list: ["0", "180"]
+  # 方向分类批处理数量
+  cls_batch_num: 6
+  # 方向分类置信度阈值
+  cls_thresh: 0.9
+
+# --- 端到端 (e2e) ---
+E2E:
+  # 端到端算法，例如 "PGNet"
+  e2e_algorithm: "PGNet"
+  # 端到端模型文件路径
+  e2e_model_dir: null
+  # 输入图片长边的限制
+  e2e_limit_side_len: 768
+  # 限制类型，可选 "max", "min"
+  e2e_limit_type: "max"
+
+  # PGNet算法相关参数
+  # PGNet后处理的得分阈值
+  e2e_pgnet_score_thresh: 0.5
+  # PGNet字符字典文件路径
+  e2e_char_dict_path: ./ppocr/utils/ic15_dict.txt
+  # PGNet验证集, 可选 "totaltext", "partvgg"
+  e2e_pgnet_valid_set: "totaltext"
+  # PGNet模式，可选 "fast", "slow"
+  e2e_pgnet_mode: "fast"
+
+# --- 图像超分 (SR) ---
+SR:
+  # 超分模型文件路径
+  sr_model_dir: null
+  # 超分模型输入图像尺寸，格式为 "C, H, W"
+  sr_image_shape: "3, 32, 128"
+  # 超分批处理数量
+  sr_batch_num: 1
