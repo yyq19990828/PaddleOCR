@@ -41,9 +41,11 @@ dataset/*
 
 output_inference
 output_train
+debug/
+tools/*.sh
 
-pretrained_models/*
-!pretrained_models/.gitkeep
+pretrain_models/*
+!pretrain_models/.gitkeep
 
 # Ignore symbolic links
 *.lnk

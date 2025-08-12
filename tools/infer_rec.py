@@ -98,7 +98,7 @@ def main():
 
     model = build_model(config["Architecture"])
 
-    load_model(config, model)
+    load_model(config, model, model_type="rec")
 
     # create data ops
     transforms = []

@@ -2,20 +2,21 @@ Global:
   model_name: PP-OCRv5_server_rec # To use static model for inference.
   debug: false
   use_gpu: true
-  epoch_num: 75
+  epoch_num: 100
   log_smooth_window: 20
   print_batch_step: 10
-  save_model_dir: ./output/PP-OCRv5_server_rec
+  save_model_dir: ./output_train/PP-OCRv5_server_rec
   save_epoch_step: 1
-  eval_batch_step: [0, 2000]
+  eval_batch_step: [0, 500] #2000 表示每2000次迭代评估一次，[1000， 2000]表示从1000次迭代开始，每2000次评估一次
   cal_metric_during_train: true
   calc_epoch_interval: 1
   pretrained_model: 
   checkpoints:
   save_inference_dir:
   use_visualdl: false
-  infer_img: doc/imgs_words/ch/word_1.jpg
-  character_dict_path: ./ppocr/utils/dict/ppocrv5_dict.txt # 所需的字符集
+  infer_img: datasets/boden_1th/plate/single/川/blue
+  # 字符集字典路径（修正为实际存在的文件）
+  character_dict_path: ./datasets/chinese_plate_dict.txt
   max_text_length: &max_text_length 25
   infer_mode: false
   use_space_char: true
@@ -79,10 +80,13 @@ Train:
     name: MultiScaleDataSet
     ds_width: false
     data_dir: 
-    - ./train_data/
+    - ./datasets/output_multi/
+    - ./datasets/output_province/
     ext_op_transform_idx: 1
     label_file_list:
-    - ./train_data/train_list.txt
+  # 需要提供可直接打开的标注清单绝对/相对路径
+    - ./datasets/output_multi/rec/train.txt
+    - ./datasets/output_province/rec/train.txt
     transforms:
     - DecodeImage:
         img_mode: BGR
@@ -108,13 +112,17 @@ Train:
     shuffle: true
     batch_size_per_card: *bs
     drop_last: true
-    num_workers: 16
+    num_workers: 4
+    use_shared_memory: false
 Eval:
   dataset:
     name: SimpleDataSet
-    data_dir: ./train_data
+    data_dir: 
+    - ./datasets/output_multi/
+    - ./datasets/output_province/
     label_file_list:
-    - ./train_data/val_list.txt
+    - ./datasets/output_multi/rec/val.txt
+    - ./datasets/output_province/rec/val.txt
     transforms:
     - DecodeImage:
         img_mode: BGR
@@ -135,3 +143,4 @@ Eval:
     drop_last: false
     batch_size_per_card: 128
     num_workers: 4
+    use_shared_memory: false

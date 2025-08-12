@@ -1,0 +1,1 @@
+../docs/version2.x/ppocr/blog/config.md
