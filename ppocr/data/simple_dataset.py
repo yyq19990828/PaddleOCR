@@ -82,6 +82,7 @@ class SimpleDataSet(Dataset):
         random.shuffle(self.data_lines)
         return
 
+    # 支持gt为多个文件名的情况, 随机选择一个
     def _try_parse_filename_list(self, file_name):
         # multiple images -> one gt label
         if len(file_name) > 0 and file_name[0] == "[":

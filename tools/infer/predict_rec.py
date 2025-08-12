@@ -32,6 +32,7 @@ import tools.infer.utility as utility
 from ppocr.postprocess import build_post_process
 from ppocr.utils.logging import get_logger
 from ppocr.utils.utility import get_image_file_list, check_and_read
+from tools.infer.utility import preprocess_infer
 
 logger = get_logger()
 
@@ -64,6 +65,7 @@ class TextRecognizer(object):
         self.rec_image_shape = [int(v) for v in args.rec_image_shape.split(",")]
         self.rec_batch_num = args.rec_batch_num
         self.rec_algorithm = args.rec_algorithm
+        # if self.rec_algorithm == "SVTR*":
         postprocess_params = {
             "name": "CTCLabelDecode",
             "character_dict_path": args.rec_char_dict_path,
@@ -841,18 +843,48 @@ class TextRecognizer(object):
         return rec_res, time.time() - st
 
 
-def main(args):
+def main():
+    config, logger = preprocess_infer()
+    
+    # 创建一个args对象，用于兼容现有的TextRecognizer接口
+    class Args:
+        pass
+    
+    args = Args()
+    global_config = config["Global"]
+    rec_config = config.get("Rec", {})
+    
+    # 全局参数
+    args.image_dir = global_config.get("image_dir", "./")
+    args.use_gpu = global_config.get("use_gpu", True)
+    args.use_xpu = global_config.get("use_xpu", False)
+    args.use_npu = global_config.get("use_npu", False)
+    args.use_mlu = global_config.get("use_mlu", False)
+    args.use_gcu = global_config.get("use_gcu", False)
+    args.use_onnx = global_config.get("use_onnx", False)
+    args.ir_optim = global_config.get("ir_optim", True)
+    args.use_tensorrt = global_config.get("use_tensorrt", False)
+    args.min_subgraph_size = global_config.get("min_subgraph_size", 15)
+    args.precision = global_config.get("precision", "fp32")
+    args.gpu_mem = global_config.get("gpu_mem", 500)
+    args.gpu_id = global_config.get("gpu_id", 0)
+    args.benchmark = global_config.get("benchmark", False)
+    args.warmup = global_config.get("warmup", False)
+    args.save_log_path = global_config.get("save_log_path", "./log_output/")
+    
+    # 识别参数 - 从Rec配置段读取
+    args.rec_model_dir = rec_config.get("rec_model_dir", "")
+    args.rec_algorithm = rec_config.get("rec_algorithm", "SVTR_LCNet")
+    args.rec_image_shape = rec_config.get("rec_image_shape", "3, 48, 320")
+    args.rec_batch_num = rec_config.get("rec_batch_num", 6)
+    args.rec_char_dict_path = rec_config.get("rec_char_dict_path", "./ppocr/utils/ppocr_keys_v1.txt")
+    args.use_space_char = rec_config.get("use_space_char", True)
+    args.rec_image_inverse = rec_config.get("rec_image_inverse", True)
+    args.max_text_length = rec_config.get("max_text_length", 25)
+    
     image_file_list = get_image_file_list(args.image_dir)
     valid_image_file_list = []
     img_list = []
-
-    # logger
-    log_file = args.save_log_path
-    if os.path.isdir(args.save_log_path) or (
-        not os.path.exists(args.save_log_path) and args.save_log_path.endswith("/")
-    ):
-        log_file = os.path.join(log_file, "benchmark_recognition.log")
-    logger = get_logger(log_file=log_file)
 
     # create text recognizer
     text_recognizer = TextRecognizer(args)
@@ -893,4 +925,4 @@ def main(args):
 
 
 if __name__ == "__main__":
-    main(utility.parse_args())
+    main()

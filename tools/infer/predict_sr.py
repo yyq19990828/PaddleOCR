@@ -32,6 +32,7 @@ import tools.infer.utility as utility
 from ppocr.postprocess import build_post_process
 from ppocr.utils.logging import get_logger
 from ppocr.utils.utility import get_image_file_list, check_and_read
+from tools.infer.utility import preprocess_infer
 
 logger = get_logger()
 
@@ -120,7 +121,39 @@ class TextSR(object):
         return all_result, time.time() - st
 
 
-def main(args):
+def main():
+    config, logger = preprocess_infer()
+    
+    # 创建一个args对象，用于兼容现有的TextSR接口
+    class Args:
+        pass
+    
+    args = Args()
+    global_config = config["Global"]
+    sr_config = config.get("SR", {})
+    
+    # 全局参数
+    args.image_dir = global_config.get("image_dir", "./")
+    args.use_gpu = global_config.get("use_gpu", True)
+    args.use_xpu = global_config.get("use_xpu", False)
+    args.use_npu = global_config.get("use_npu", False)
+    args.use_mlu = global_config.get("use_mlu", False)
+    args.use_gcu = global_config.get("use_gcu", False)
+    args.use_onnx = global_config.get("use_onnx", False)
+    args.ir_optim = global_config.get("ir_optim", True)
+    args.use_tensorrt = global_config.get("use_tensorrt", False)
+    args.min_subgraph_size = global_config.get("min_subgraph_size", 15)
+    args.precision = global_config.get("precision", "fp32")
+    args.gpu_mem = global_config.get("gpu_mem", 500)
+    args.gpu_id = global_config.get("gpu_id", 0)
+    args.benchmark = global_config.get("benchmark", False)
+    args.warmup = global_config.get("warmup", False)
+    
+    # SR参数 - 从SR配置段读取
+    args.sr_model_dir = sr_config.get("sr_model_dir", "")
+    args.sr_image_shape = sr_config.get("sr_image_shape", "3, 32, 128")
+    args.sr_batch_num = sr_config.get("sr_batch_num", 1)
+    
     image_file_list = get_image_file_list(args.image_dir)
     text_recognizer = TextSR(args)
     valid_image_file_list = []
@@ -142,6 +175,9 @@ def main(args):
         valid_image_file_list.append(image_file)
         img_list.append(img)
     try:
+        save_dir = global_config.get("save_dir", "infer_result")
+        os.makedirs(save_dir, exist_ok=True)
+        
         preds, _ = text_recognizer(img_list)
         for beg_no in range(len(preds)):
             sr_img = preds[beg_no][1]
@@ -153,11 +189,11 @@ def main(args):
                     valid_image_file_list[beg_no * args.sr_batch_num + i]
                 )[-1]
                 cv2.imwrite(
-                    "infer_result/sr_{}".format(img_name_pure), fm_sr[:, :, ::-1]
+                    os.path.join(save_dir, "sr_{}".format(img_name_pure)), fm_sr[:, :, ::-1]
                 )
                 logger.info(
-                    "The visualized image saved in infer_result/sr_{}".format(
-                        img_name_pure
+                    "The visualized image saved in {}/sr_{}".format(
+                        save_dir, img_name_pure
                     )
                 )
 
@@ -170,4 +206,4 @@ def main(args):
 
 
 if __name__ == "__main__":
-    main(utility.parse_args())
+    main()

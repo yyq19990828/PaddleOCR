@@ -30,6 +30,7 @@ from ppocr.utils.logging import get_logger
 from ppocr.utils.utility import get_image_file_list, check_and_read
 from ppocr.data import create_operators, transform
 from ppocr.postprocess import build_post_process
+from tools.infer.utility import preprocess_infer
 
 logger = get_logger()
 
@@ -148,13 +149,52 @@ class TextE2E(object):
         return dt_boxes, strs, elapse
 
 
-if __name__ == "__main__":
-    args = utility.parse_args()
+def main():
+    config, logger = preprocess_infer()
+    
+    # 创建一个args对象，用于兼容现有的TextE2E接口
+    class Args:
+        pass
+    
+    args = Args()
+    global_config = config["Global"]
+    e2e_config = config.get("E2E", {})
+    
+    # 全局参数
+    args.image_dir = global_config.get("image_dir", "./")
+    args.use_gpu = global_config.get("use_gpu", True)
+    args.use_xpu = global_config.get("use_xpu", False)
+    args.use_npu = global_config.get("use_npu", False)
+    args.use_mlu = global_config.get("use_mlu", False)
+    args.use_gcu = global_config.get("use_gcu", False)
+    args.use_onnx = global_config.get("use_onnx", False)
+    args.ir_optim = global_config.get("ir_optim", True)
+    args.use_tensorrt = global_config.get("use_tensorrt", False)
+    args.min_subgraph_size = global_config.get("min_subgraph_size", 15)
+    args.precision = global_config.get("precision", "fp32")
+    args.gpu_mem = global_config.get("gpu_mem", 500)
+    args.gpu_id = global_config.get("gpu_id", 0)
+    args.benchmark = global_config.get("benchmark", False)
+    
+    # E2E参数 - 从E2E配置段读取
+    args.e2e_model_dir = e2e_config.get("e2e_model_dir", "")
+    args.e2e_algorithm = e2e_config.get("e2e_algorithm", "PGNet")
+    args.e2e_limit_side_len = e2e_config.get("e2e_limit_side_len", 768)
+    args.e2e_limit_type = e2e_config.get("e2e_limit_type", "max")
+    args.e2e_char_dict_path = e2e_config.get("e2e_char_dict_path", "./ppocr/utils/ic15_dict.txt")
+    args.use_space_char = global_config.get("use_space_char", True)  # 通常在Global中设置
+    
+    # PGNet特定参数
+    args.e2e_pgnet_score_thresh = e2e_config.get("e2e_pgnet_score_thresh", 0.5)
+    args.e2e_pgnet_mode = e2e_config.get("e2e_pgnet_mode", "fast")
+    args.e2e_pgnet_polygon = e2e_config.get("e2e_pgnet_polygon", True)
+    args.e2e_pgnet_valid_set = e2e_config.get("e2e_pgnet_valid_set", "totaltext")
+    
     image_file_list = get_image_file_list(args.image_dir)
     text_detector = TextE2E(args)
     count = 0
     total_time = 0
-    draw_img_save = "./inference_results"
+    draw_img_save = global_config.get("draw_img_save_dir", "./inference_results")
     if not os.path.exists(draw_img_save):
         os.makedirs(draw_img_save)
     for image_file in image_file_list:
@@ -176,3 +216,7 @@ if __name__ == "__main__":
         logger.info("The visualized image saved in {}".format(img_path))
     if count > 1:
         logger.info("Avg Time: {}".format(total_time / (count - 1)))
+
+
+if __name__ == "__main__":
+    main()
