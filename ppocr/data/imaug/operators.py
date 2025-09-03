@@ -521,3 +521,66 @@ class GrayImageChannelFormat(object):
 
         data["src_image"] = img
         return data
+
+
+class FilterByImageWidth(object):
+    """根据图像宽度过滤数据样本"""
+
+    def __init__(self, width_range=None, **kwargs):
+        """
+        初始化宽度过滤器
+        
+        Args:
+            width_range (list or None): 宽度过滤范围
+                - [min, max]: 保留 min <= width <= max 的图片
+                - [min, ]: 保留 width >= min 的图片  
+                - None: 不进行过滤（默认）
+        """
+        self.width_range = width_range
+        
+        # 验证参数格式
+        if self.width_range is not None:
+            if not isinstance(self.width_range, (list, tuple)):
+                raise ValueError("width_range must be a list or tuple, got {}".format(type(self.width_range)))
+            
+            if len(self.width_range) == 2:
+                min_width, max_width = self.width_range
+                if min_width is not None and max_width is not None:
+                    if min_width > max_width:
+                        raise ValueError("min_width ({}) should be less than or equal to max_width ({})".format(min_width, max_width))
+                elif min_width is None and max_width is None:
+                    raise ValueError("width_range cannot be [None, None]")
+            else:
+                raise ValueError("width_range should have exactly 2 elements, got {}".format(len(self.width_range)))
+
+    def __call__(self, data):
+        """执行宽度过滤"""
+        # 如果未设置过滤条件，直接返回
+        if self.width_range is None:
+            return data
+            
+        img = data["image"]
+        assert isinstance(img, np.ndarray), "invalid input 'img' in FilterByImageWidth, expected numpy array, got {}".format(type(img))
+        
+        # 获取图片宽度
+        img_width = img.shape[1]
+        
+        # 检查宽度是否在范围内
+        if not self._is_width_in_range(img_width):
+            return None  # 不符合条件，返回None触发数据跳过
+            
+        return data
+
+    def _is_width_in_range(self, width):
+        """检查宽度是否在指定范围内"""
+        min_width, max_width = self.width_range
+        
+        # 检查最小宽度条件
+        if min_width is not None and width < min_width:
+            return False
+            
+        # 检查最大宽度条件
+        if max_width is not None and width > max_width:
+            return False
+            
+        return True
