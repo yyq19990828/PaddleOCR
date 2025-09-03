@@ -1,0 +1,244 @@
+# FilterByImageWidth 使用示例配置
+# 本配置文件展示了如何在不同场景下使用FilterByImageWidth操作符
+
+Global:
+  model_name: PP-OCRv5_server_rec
+  debug: false
+  use_gpu: true
+  epoch_num: 10
+  log_smooth_window: 20
+  print_batch_step: 10
+  save_model_dir: ./output_train/filter_width_example
+  save_epoch_step: 1
+  eval_batch_step: [0, 500]
+  cal_metric_during_train: true
+  calc_epoch_interval: 1
+  pretrained_model: 
+  checkpoints:
+  save_inference_dir:
+  use_visualdl: false
+  infer_img: ./example_images/
+  character_dict_path: ./ppocr/utils/ppocr_keys_v1.txt
+  max_text_length: &max_text_length 25
+  infer_mode: false
+  use_space_char: true
+  distributed: false
+  save_res_path: ./output/rec/predicts_filter_width.txt
+
+Optimizer:
+  name: Adam
+  beta1: 0.9
+  beta2: 0.999
+  lr:
+    name: Cosine
+    learning_rate: 0.001
+    warmup_epoch: 1
+  regularizer:
+    name: L2
+    factor: 3.0e-05
+
+Architecture:
+  model_type: rec
+  algorithm: SVTR_HGNet
+  Transform:
+  Backbone:
+    name: PPHGNetV2_B4
+    text_rec: True
+  Head:
+    name: CTCHead
+    fc_decay: 0.00001
+
+Loss:
+  name: CTCLoss
+
+PostProcess:  
+  name: CTCLabelDecode
+
+Metric:
+  name: RecMetric
+  main_indicator: acc
+
+# 训练数据集配置 - 使用FilterByImageWidth过滤训练数据
+Train:
+  dataset:
+    name: SimpleDataSet
+    data_dir: ./train_data/rec/
+    label_file_list:
+      - ./train_data/rec/train_list.txt
+    transforms:
+      - DecodeImage:
+          img_mode: BGR
+          channel_first: false
+      # 训练时过滤异常尺寸的图片，保留常见尺寸范围
+      - FilterByImageWidth:
+          width_range: [50, 800]  # 过滤宽度小于50或大于800像素的图片
+      - RecAug:                   # 数据增强
+      - CTCLabelEncode:
+          use_space_char: true
+      - RecResizeImg:
+          image_shape: [3, 32, 320]
+      - KeepKeys:
+          keep_keys:
+            - image
+            - label_ctc
+            - length
+            - valid_ratio
+  loader:
+    shuffle: true
+    batch_size_per_card: 64
+    drop_last: true
+    num_workers: 4
+
+# 全量评估数据集配置 - 不使用过滤器
+Eval:
+  dataset:
+    name: SimpleDataSet
+    data_dir: ./train_data/rec/
+    label_file_list:
+      - ./train_data/rec/eval_list.txt
+    transforms:
+      - DecodeImage:
+          img_mode: BGR
+          channel_first: false
+      # 全量评估：不使用FilterByImageWidth，评估所有数据
+      - CTCLabelEncode:
+          use_space_char: true
+      - RecResizeImg:
+          image_shape: [3, 32, 320]
+      - KeepKeys:
+          keep_keys:
+            - image
+            - label_ctc
+            - length
+            - valid_ratio
+  loader:
+    shuffle: false
+    drop_last: false
+    batch_size_per_card: 64
+    num_workers: 4
+
+---
+# 以下是不同使用场景的配置示例
+
+# 场景1: 移动端小图片性能专项评估
+Eval_Mobile:
+  dataset:
+    name: SimpleDataSet
+    data_dir: ./train_data/rec/
+    label_file_list:
+      - ./train_data/rec/eval_list.txt
+    transforms:
+      - DecodeImage:
+          img_mode: BGR
+          channel_first: false
+      # 移动端场景：只评估小尺寸图片
+      - FilterByImageWidth:
+          width_range: [0, 80]     # 聚焦移动端小图片
+      - CTCLabelEncode:
+          use_space_char: true
+      - RecResizeImg:
+          image_shape: [3, 32, 320]
+      - KeepKeys:
+          keep_keys:
+            - image
+            - label_ctc
+            - length
+            - valid_ratio
+  loader:
+    shuffle: false
+    drop_last: false
+    batch_size_per_card: 64
+    num_workers: 4
+
+---
+# 场景2: 高分辨率图片性能评估
+Eval_HighRes:
+  dataset:
+    name: SimpleDataSet
+    data_dir: ./train_data/rec/
+    label_file_list:
+      - ./train_data/rec/eval_list.txt
+    transforms:
+      - DecodeImage:
+          img_mode: BGR
+          channel_first: false
+      # 高分辨率场景：只评估大尺寸图片
+      - FilterByImageWidth:
+          width_range: [1000, ]    # 测试高分辨率图片性能
+      - CTCLabelEncode:
+          use_space_char: true
+      - RecResizeImg:
+          image_shape: [3, 32, 320]
+      - KeepKeys:
+          keep_keys:
+            - image
+            - label_ctc
+            - length
+            - valid_ratio
+  loader:
+    shuffle: false
+    drop_last: false
+    batch_size_per_card: 32        # 大图片使用较小batch size
+    num_workers: 4
+
+---
+# 场景3: 标准尺寸范围评估
+Eval_Standard:
+  dataset:
+    name: SimpleDataSet
+    data_dir: ./train_data/rec/
+    label_file_list:
+      - ./train_data/rec/eval_list.txt
+    transforms:
+      - DecodeImage:
+          img_mode: BGR
+          channel_first: false
+      # 标准场景：评估常见尺寸范围
+      - FilterByImageWidth:
+          width_range: [100, 500]  # 标准尺寸范围
+      - CTCLabelEncode:
+          use_space_char: true
+      - RecResizeImg:
+          image_shape: [3, 32, 320]
+      - KeepKeys:
+          keep_keys:
+            - image
+            - label_ctc
+            - length
+            - valid_ratio
+  loader:
+    shuffle: false
+    drop_last: false
+    batch_size_per_card: 64
+    num_workers: 4
+
+---
+# 场景4: 文档扫描场景特定评估
+Eval_Document:
+  dataset:
+    name: SimpleDataSet
+    data_dir: ./train_data/rec/
+    label_file_list:
+      - ./train_data/rec/eval_list.txt
+    transforms:
+      - DecodeImage:
+          img_mode: BGR
+          channel_first: false
+      # 文档场景：聚焦文档扫描常见尺寸
+      - FilterByImageWidth:
+          width_range: [200, 800]  # 文档扫描场景尺寸
+      - CTCLabelEncode:
+          use_space_char: true
+      - RecResizeImg:
+          image_shape: [3, 32, 320]
+      - KeepKeys:
+          keep_keys:
+            - image
+            - label_ctc
+            - length
+            - valid_ratio
+  loader:
+    shuffle: false
+    drop_last: false
+    batch_size_per_card: 64
+    num_workers: 4
