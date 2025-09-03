@@ -561,15 +561,15 @@ class FilterByImageWidth(object):
 
     def __call__(self, data):
         """执行宽度过滤"""
-        # 如果未设置过滤条件，直接返回
-        if self.width_range is None:
-            return data
-            
         img = data["image"]
         assert isinstance(img, np.ndarray), "invalid input 'img' in FilterByImageWidth, expected numpy array, got {}".format(type(img))
         
         # 增加总计数
         self.total_count += 1
+        
+        # 如果未设置过滤条件，直接返回
+        if self.width_range is None:
+            return data
         
         # 获取图片宽度
         img_width = img.shape[1]
