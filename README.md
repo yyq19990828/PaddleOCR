@@ -379,6 +379,7 @@ print(chat_result)
 - [PP-OCRv5 Tutorial](https://paddlepaddle.github.io/PaddleOCR/latest/version3.x/pipeline_usage/OCR.html)
 - [PP-StructureV3 Tutorial](https://paddlepaddle.github.io/PaddleOCR/latest/version3.x/pipeline_usage/PP-StructureV3.html)
 - [PP-ChatOCRv4 Tutorial](https://paddlepaddle.github.io/PaddleOCR/latest/version3.x/pipeline_usage/PP-ChatOCRv4.html)
+- [Data Preprocessing and Augmentation](docs/version3.x/tutorials/data_augmentation.md)
 
 ## 🔄 Quick Overview of Execution Results
 
