@@ -1,9 +1,0 @@
-{
-  "avg_baseline_time": 0.001114797592163086,
-  "avg_filter_time": 0.003582763671875,
-  "performance_impact": 221.38243722999275,
-  "performance_ok": false,
-  "per_image_overhead_ms": 0.0004935932159423829,
-  "total_images": 5000,
-  "num_tests": 5
-}
