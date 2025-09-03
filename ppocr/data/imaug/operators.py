@@ -24,6 +24,7 @@ import cv2
 import numpy as np
 import math
 from PIL import Image
+from ppocr.utils.logging import get_logger
 
 
 class DecodeImage(object):
@@ -524,7 +525,7 @@ class GrayImageChannelFormat(object):
 
 
 class FilterByImageWidth(object):
-    """根据图像宽度过滤数据样本"""
+    """根据图像宽度过滤数据样本，并收集过滤统计信息"""
 
     def __init__(self, width_range=None, **kwargs):
         """
@@ -537,6 +538,11 @@ class FilterByImageWidth(object):
                 - None: 不进行过滤（默认）
         """
         self.width_range = width_range
+        self.logger = get_logger()
+        
+        # 统计计数器
+        self.total_count = 0
+        self.filtered_count = 0
         
         # 验证参数格式
         if self.width_range is not None:
@@ -562,11 +568,15 @@ class FilterByImageWidth(object):
         img = data["image"]
         assert isinstance(img, np.ndarray), "invalid input 'img' in FilterByImageWidth, expected numpy array, got {}".format(type(img))
         
+        # 增加总计数
+        self.total_count += 1
+        
         # 获取图片宽度
         img_width = img.shape[1]
         
         # 检查宽度是否在范围内
         if not self._is_width_in_range(img_width):
+            self.filtered_count += 1  # 增加过滤计数
             return None  # 不符合条件，返回None触发数据跳过
             
         return data
@@ -584,3 +594,32 @@ class FilterByImageWidth(object):
             return False
             
         return True
+    
+    def get_statistics(self):
+        """获取过滤统计信息"""
+        kept_count = self.total_count - self.filtered_count
+        filter_rate = (self.filtered_count / self.total_count * 100.0) if self.total_count > 0 else 0.0
+        keep_rate = (kept_count / self.total_count * 100.0) if self.total_count > 0 else 0.0
+        
+        return {
+            'total_count': self.total_count,
+            'filtered_count': self.filtered_count,
+            'kept_count': kept_count,
+            'filter_rate': filter_rate,
+            'keep_rate': keep_rate,
+            'width_range': self.width_range
+        }
+    
+    def print_statistics(self):
+        """打印过滤统计信息"""
+        if self.width_range is None:
+            self.logger.info("FilterByImageWidth: No filtering applied (width_range=None)")
+            return
+            
+        stats = self.get_statistics()
+        
+        self.logger.info("FilterByImageWidth Statistics:")
+        self.logger.info("- Total images: {}".format(stats['total_count']))
+        self.logger.info("- Filtered out: {} ({:.1f}%)".format(stats['filtered_count'], stats['filter_rate']))
+        self.logger.info("- Kept images: {} ({:.1f}%)".format(stats['kept_count'], stats['keep_rate']))
+        self.logger.info("- Width range: {}".format(stats['width_range']))
