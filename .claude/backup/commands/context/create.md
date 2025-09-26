@@ -8,8 +8,8 @@ This command creates the initial project context documentation in `.claude/conte
 
 ## Required Rules
 
-**IMPORTANT:** Before executing this command, follow:
-use `get-current-datetime` sub-agent For getting real current date/time
+**IMPORTANT:** Before executing this command, read and follow:
+- `.claude/rules/datetime.md` - For getting real current date/time
 
 ## Preflight Checklist
 
@@ -38,8 +38,9 @@ Do not bother the user with preflight checks progress ("I'm not going to ..."). 
 - Verify write permissions: `touch .claude/context/.test && rm .claude/context/.test`
 - If permission denied, tell user: "❌ Cannot create context directory. Check permissions."
 
-### 4. Store Current DateTime
-- Store this date-time value for use in all context file frontmatter
+### 4. Get Current DateTime
+- Run: `date -u +"%Y-%m-%dT%H:%M:%SZ"`
+- Store this value for use in all context file frontmatter
 
 ## Instructions
 
@@ -67,8 +68,8 @@ Each context file MUST include frontmatter with real datetime:
 
 ```yaml
 ---
-created: [Use REAL datetime from sub-agent]
-last_updated: [Use REAL datetime from sub-agent]
+created: [Use REAL datetime from date command]
+last_updated: [Use REAL datetime from date command]
 version: 1.0
 author: Claude Code PM System
 ---

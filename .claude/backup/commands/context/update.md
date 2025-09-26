@@ -8,8 +8,8 @@ This command updates the project context documentation in `.claude/context/` to 
 
 ## Required Rules
 
-**IMPORTANT:** Before executing this command, follow:
-use `get-current-datetime` sub-agent For getting real current date/time
+**IMPORTANT:** Before executing this command, read and follow:
+- `.claude/rules/datetime.md` - For getting real current date/time
 
 ## Preflight Checklist
 
@@ -42,9 +42,9 @@ Gather information about what has changed:
 - Python: `git diff HEAD~5..HEAD requirements.txt 2>/dev/null`
 - Check if new dependencies were added or versions changed
 
-### 3. Update Current DateTime
+### 3. Get Current DateTime
 - Run: `date -u +"%Y-%m-%dT%H:%M:%SZ"`
-- Store date-time value for updating `last_updated` field in modified files
+- Store for updating `last_updated` field in modified files
 
 ## Instructions
 
@@ -108,7 +108,7 @@ For each context file, determine if updates are needed:
    ```yaml
    ---
    created: [preserve original]
-   last_updated: [Use REAL datetime from sub-agent]
+   last_updated: [Use REAL datetime from date command]
    version: [increment if major update, e.g., 1.0 → 1.1]
    author: Claude Code PM System
    ---
