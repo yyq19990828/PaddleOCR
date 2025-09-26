@@ -2,6 +2,229 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Change Log (Changelog)
+
+### 2025-09-26: Project AI Context Initialization
+- Added comprehensive project architecture overview and module structure
+- Created Mermaid diagram for module relationships
+- Enhanced module index with detailed descriptions
+- Standardized development guidelines and testing strategy
+
+## Project Vision
+
+PaddleOCR is an industry-leading, production-ready OCR and document AI engine that converts documents and images into structured, AI-friendly data (like JSON and Markdown) with industry-leading accuracy. The project powers AI applications for everyone from indie developers and startups to large enterprises worldwide, with over 50,000 stars and deep integration into leading projects like MinerU, RAGFlow, and OmniParser.
+
+## Architecture Overview
+
+PaddleOCR 3.0 follows a dual-architecture design:
+
+1. **paddleocr/** - High-level pipeline interface (3.x API) built on PaddleX framework
+   - Provides unified, user-friendly pipelines for end-to-end OCR workflows
+   - Supports PP-OCRv5, PP-StructureV3, PP-ChatOCRv4 and other latest models
+   - Handles model downloading, caching, and inference optimization automatically
+
+2. **ppocr/** - Low-level core library (legacy 2.x compatible)
+   - Contains training, fine-tuning, and research-oriented functionality
+   - Provides granular control over model architectures, losses, and optimization
+   - Supports academic algorithm implementations and custom model development
+
+3. **Deployment & Integration** - Production deployment solutions
+   - Multiple deployment options: Python/C++, Docker, Mobile, Cloud
+   - Hardware acceleration support: CPU, GPU, XPU, NPU
+   - Service integration: REST API, gRPC, PaddleServing
+
+## Module Structure Diagram
+
+```mermaid
+graph TD
+    A["(Root) PaddleOCR"] --> B["paddleocr/"];
+    A --> C["ppocr/"];
+    A --> D["configs/"];
+    A --> E["tools/"];
+    A --> F["deploy/"];
+    A --> G["tests/"];
+    A --> H["benchmark/"];
+
+    B --> B1["_models/"];
+    B --> B2["_pipelines/"];
+    B --> B3["_utils/"];
+
+    C --> C1["data/"];
+    C --> C2["modeling/"];
+    C --> C3["losses/"];
+    C --> C4["metrics/"];
+    C --> C5["postprocess/"];
+    C --> C6["optimizer/"];
+
+    D --> D1["det/"];
+    D --> D2["rec/"];
+    D --> D3["kie/"];
+    D --> D4["table/"];
+
+    E --> E1["infer/"];
+    E --> E2["end2end/"];
+
+    F --> F1["hubserving/"];
+    F --> F2["cpp_infer/"];
+    F --> F3["slim/"];
+    F --> F4["paddle2onnx/"];
+
+    G --> G1["models/"];
+    G --> G2["pipelines/"];
+
+    click B "./paddleocr/CLAUDE.md" "View paddleocr module docs"
+    click C "./ppocr/CLAUDE.md" "View ppocr module docs"
+    click D "./configs/CLAUDE.md" "View configs module docs"
+    click E "./tools/CLAUDE.md" "View tools module docs"
+    click F "./deploy/CLAUDE.md" "View deploy module docs"
+    click G "./tests/CLAUDE.md" "View tests module docs"
+```
+
+## Module Index
+
+| Module | Path | Responsibility | Key Features |
+|--------|------|----------------|--------------|
+| **High-Level API** | `paddleocr/` | User-friendly pipeline interface | PP-OCRv5, PP-StructureV3, PP-ChatOCRv4 pipelines |
+| **Core Library** | `ppocr/` | Training, research, and low-level components | Model architectures, losses, metrics, data processing |
+| **Configuration** | `configs/` | Model and training configurations | YAML configs for all supported models and tasks |
+| **Tools** | `tools/` | Training, evaluation, and inference scripts | Command-line tools for model lifecycle |
+| **Deployment** | `deploy/` | Production deployment solutions | C++, mobile, cloud, and service deployment |
+| **Testing** | `tests/` | Quality assurance and validation | Unit tests, integration tests, pipeline tests |
+| **Benchmarking** | `benchmark/` | Performance evaluation | Training benchmarks and model comparisons |
+| **Legacy Structure** | `ppstructure/` | Document parsing (v2.x, deprecated) | Migrated to PP-StructureV3 in paddleocr/ |
+
+## Running and Development
+
+### Installation
+```bash
+# Core OCR functionality
+pip install paddleocr
+
+# With document parsing
+pip install paddleocr[doc-parser]
+
+# With information extraction
+pip install paddleocr[ie]
+
+# With translation
+pip install paddleocr[trans]
+
+# All features
+pip install paddleocr[all]
+
+# Development installation
+pip install -r requirements.txt
+pip install -e .
+```
+
+### Common Commands
+
+#### High-Level Pipeline Usage (Recommended)
+```bash
+# Text recognition
+paddleocr --image_dir <image_path> --lang ch
+
+# Document parsing
+python -c "from paddleocr import PPStructureV3; parser = PPStructureV3(); result = parser('<pdf_path>')"
+
+# Information extraction
+python -c "from paddleocr import PPChatOCRv4Doc; extractor = PPChatOCRv4Doc(); result = extractor('<image_path>', '<query>')"
+```
+
+#### Low-Level Training and Research
+```bash
+# Training
+python tools/train.py -c <config_file>
+
+# Evaluation
+python tools/eval.py -c <config_file> -o Global.pretrained_model=<model_path>
+
+# Inference
+python tools/infer_det.py -c <config_file> -o Global.pretrained_model=<model_path> Global.infer_img=<image_path>
+
+# Export model
+python tools/export_model.py -c <config_file> -o Global.pretrained_model=<model_path> Global.save_inference_dir=<output_dir>
+```
+
+## Testing Strategy
+
+### Test Organization
+- **Unit Tests**: Component-level testing in `tests/models/` and `tests/pipelines/`
+- **Integration Tests**: End-to-end pipeline testing
+- **Resource-Intensive Tests**: Marked with `@pytest.mark.resource_intensive`
+
+### Running Tests
+```bash
+# All tests (excluding resource-intensive)
+pytest tests/
+
+# Specific test module
+pytest tests/pipelines/test_ocr.py
+
+# Including resource-intensive tests
+pytest tests/ -m ""
+
+# Single test with verbose output
+pytest tests/test_specific.py -v -s
+```
+
+### Test Guidelines
+- Use the test-runner agent for executing tests
+- Tests must be accurate and reflect real usage
+- Design verbose tests for debugging purposes
+- No mock services - test against real implementations
+- Each function must have corresponding tests
+
+## Coding Standards
+
+### Architecture Principles
+- **Separation of Concerns**: Clear distinction between high-level pipelines (paddleocr/) and low-level components (ppocr/)
+- **Backward Compatibility**: ppocr/ maintains 2.x compatibility while paddleocr/ provides modern 3.x interface
+- **Configuration-Driven**: All models and training procedures configurable via YAML files
+- **Modular Design**: Pluggable components for models, losses, metrics, and data processing
+
+### Code Style
+- Follow PaddlePaddle framework conventions
+- Use type hints for function parameters and return values
+- Comprehensive docstrings for all public APIs
+- Consistent naming patterns across modules
+- No code duplication - reuse existing functions and constants
+
+### Development Workflow
+1. **Analysis**: Understand existing patterns before implementing
+2. **Minimal Changes**: Implement the most concise solution with minimal code changes
+3. **Testing**: Write tests before implementation when possible
+4. **Documentation**: Update relevant documentation
+5. **Integration**: Ensure compatibility with both paddleocr/ and ppocr/ interfaces
+
+## AI Usage Guidelines
+
+### Context Optimization
+- Use sub-agents for specialized tasks:
+  - **file-analyzer**: For reading and summarizing files
+  - **code-analyzer**: For code analysis and bug tracing
+  - **test-runner**: For executing tests and analyzing results
+- Batch file operations when possible
+- Prioritize high-signal information extraction
+
+### Model Integration
+- Understand the dual-architecture: paddleocr/ (user interface) vs ppocr/ (core implementation)
+- When adding new models, implement in ppocr/ first, then expose via paddleocr/ pipelines
+- Follow existing patterns for model registration and configuration
+- Consider deployment implications (C++, mobile, cloud compatibility)
+
+### Performance Considerations
+- OCR operations are compute-intensive - optimize for inference speed
+- Memory management is critical for large documents
+- Support for heterogeneous hardware (CPU, GPU, XPU, NPU)
+- Batch processing capabilities for high-throughput scenarios
+
+### Error Handling Philosophy
+- **Fail fast** for critical configuration errors
+- **Log and continue** for optional features
+- **Graceful degradation** when external services are unavailable
+- **User-friendly messages** with actionable guidance
+
 ## 常用命令
 
 ### 配置文件实例
@@ -19,10 +242,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### 模型导出
 - **导出推理模型**: `python tools/export_model.py -c <config_file> -o Global.pretrained_model=<model_path> Global.save_inference_dir=<output_dir>`
-
-### 测试
-- **运行pytest测试**: `pytest tests/`
-- **运行单个测试**: `pytest tests/test_<specific_test>.py`
 
 ### 安装和环境
 - **安装依赖**: `pip install -r requirements.txt`
@@ -134,7 +353,7 @@ Using the test-runner agent ensures:
 ## Tone and Behavior
 
 - Criticism is welcome. Please tell me when I am wrong or mistaken, or even when you think I might be wrong or mistaken.
-- Please tell me if there is a better approach than the one I am taking.
+- Please tell me if there is a better approach than the one I are taking.
 - Please tell me if there is a relevant standard or convention that I appear to be unaware of.
 - Be skeptical.
 - Be concise.

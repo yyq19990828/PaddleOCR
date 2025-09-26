@@ -1,0 +1,234 @@
+{
+  "timestamp": "2025-09-26T14:05:09Z",
+  "scan_summary": {
+    "repository_type": "OCR and Document AI toolkit",
+    "primary_language": "Python",
+    "framework": "PaddlePaddle",
+    "architecture": "Dual-architecture (paddleocr 3.x + ppocr 2.x)",
+    "total_estimated_files": 2000,
+    "scanned_files": 150,
+    "coverage_percentage": 7.5
+  },
+  "modules": {
+    "root": {
+      "path": "/media/hehao/data/yiqing/dataset/PaddleOCR",
+      "documentation": "CLAUDE.md",
+      "type": "root",
+      "responsibility": "Project root with dual-architecture OCR toolkit",
+      "key_files": [
+        "setup.py",
+        "pyproject.toml",
+        "README.md",
+        "requirements.txt",
+        "train.sh"
+      ],
+      "entry_points": [
+        "paddleocr command-line interface",
+        "tools/train.py",
+        "tools/eval.py"
+      ]
+    },
+    "paddleocr": {
+      "path": "/media/hehao/data/yiqing/dataset/PaddleOCR/paddleocr",
+      "documentation": "paddleocr/CLAUDE.md",
+      "type": "high_level_api",
+      "responsibility": "Modern 3.x API with user-friendly pipelines",
+      "key_files": [
+        "__init__.py",
+        "__main__.py",
+        "_version.py",
+        "_pipelines/__init__.py",
+        "_models/__init__.py"
+      ],
+      "interfaces": [
+        "PaddleOCR pipeline",
+        "PPStructureV3 pipeline",
+        "PPChatOCRv4Doc pipeline",
+        "Command-line interface"
+      ],
+      "dependencies": [
+        "paddlex[ocr-core]>=3.2.0",
+        "PyYAML>=6",
+        "typing-extensions>=4.12"
+      ]
+    },
+    "ppocr": {
+      "path": "/media/hehao/data/yiqing/dataset/PaddleOCR/ppocr",
+      "documentation": "ppocr/CLAUDE.md",
+      "type": "core_library",
+      "responsibility": "Low-level core library for training and research",
+      "key_files": [
+        "__init__.py",
+        "modeling/architectures/__init__.py",
+        "data/__init__.py",
+        "losses/__init__.py",
+        "metrics/__init__.py"
+      ],
+      "interfaces": [
+        "Model building API",
+        "Training infrastructure",
+        "Data processing API",
+        "Component registration"
+      ],
+      "submodules": [
+        "data",
+        "modeling",
+        "losses",
+        "metrics",
+        "postprocess",
+        "optimizer",
+        "utils"
+      ]
+    },
+    "tools": {
+      "path": "/media/hehao/data/yiqing/dataset/PaddleOCR/tools",
+      "documentation": "tools/CLAUDE.md",
+      "type": "utilities",
+      "responsibility": "Training, evaluation, and inference command-line tools",
+      "key_files": [
+        "train.py",
+        "eval.py",
+        "export_model.py",
+        "infer_det.py",
+        "infer_rec.py",
+        "program.py"
+      ],
+      "interfaces": [
+        "Training interface",
+        "Evaluation interface",
+        "Inference interface",
+        "Model export interface"
+      ]
+    },
+    "deploy": {
+      "path": "/media/hehao/data/yiqing/dataset/PaddleOCR/deploy",
+      "documentation": "deploy/CLAUDE.md",
+      "type": "deployment",
+      "responsibility": "Production deployment solutions across platforms",
+      "key_files": [
+        "README.md",
+        "cpp_infer/",
+        "hubserving/",
+        "slim/"
+      ],
+      "interfaces": [
+        "C++ inference API",
+        "Python service API",
+        "Mobile integration API",
+        "Container deployment"
+      ],
+      "submodules": [
+        "cpp_infer",
+        "hubserving",
+        "slim",
+        "lite",
+        "paddle2onnx"
+      ]
+    },
+    "tests": {
+      "path": "/media/hehao/data/yiqing/dataset/PaddleOCR/tests",
+      "documentation": "tests/CLAUDE.md",
+      "type": "testing",
+      "responsibility": "Quality assurance and testing infrastructure",
+      "key_files": [
+        "testing_utils.py",
+        "models/",
+        "pipelines/"
+      ],
+      "interfaces": [
+        "pytest testing framework",
+        "Performance benchmarking",
+        "CI/CD integration"
+      ],
+      "test_types": [
+        "unit_tests",
+        "integration_tests",
+        "performance_tests",
+        "resource_intensive_tests"
+      ]
+    },
+    "configs": {
+      "path": "/media/hehao/data/yiqing/dataset/PaddleOCR/configs",
+      "type": "configuration",
+      "responsibility": "YAML configuration files for all models and tasks",
+      "key_directories": [
+        "det/",
+        "rec/",
+        "kie/",
+        "table/",
+        "cls/"
+      ],
+      "interfaces": [
+        "Training configurations",
+        "Model architectures",
+        "Dataset configurations"
+      ]
+    },
+    "benchmark": {
+      "path": "/media/hehao/data/yiqing/dataset/PaddleOCR/benchmark",
+      "type": "performance",
+      "responsibility": "Performance evaluation and benchmarking",
+      "key_files": [
+        "readme.md",
+        "analysis.py",
+        "PaddleOCR_DBNet/"
+      ]
+    }
+  },
+  "ignore_patterns": [
+    "__pycache__/**",
+    ".ipynb_checkpoints/",
+    "*.py[cod]",
+    "inference/",
+    "inference_results/",
+    "output/",
+    "train_data/",
+    "log/",
+    "build/",
+    "dist/",
+    "_test/*",
+    "dataset/*",
+    "output_inference",
+    "output_train",
+    "debug/",
+    "pretrain_models/*",
+    "logs/"
+  ],
+  "scan_coverage": {
+    "scanned_directories": [
+      "paddleocr/",
+      "ppocr/",
+      "tools/",
+      "deploy/",
+      "tests/",
+      "configs/",
+      "benchmark/"
+    ],
+    "documentation_created": [
+      "CLAUDE.md (root)",
+      "paddleocr/CLAUDE.md",
+      "ppocr/CLAUDE.md",
+      "tools/CLAUDE.md",
+      "deploy/CLAUDE.md",
+      "tests/CLAUDE.md"
+    ],
+    "gaps": [
+      "configs/ module documentation",
+      "ppstructure/ legacy documentation",
+      "docs/ directory analysis",
+      "Deep component scanning in ppocr submodules",
+      "Detailed model architecture analysis"
+    ]
+  },
+  "next_steps_recommended": [
+    "Create configs/CLAUDE.md for configuration management",
+    "Deep scan ppocr/modeling/ for detailed architecture documentation",
+    "Analyze ppocr/data/ for data processing workflows",
+    "Document ppocr/losses/ and ppocr/metrics/ components",
+    "Create specialized documentation for deployment scenarios",
+    "Add performance benchmarking documentation"
+  ],
+  "truncated": false,
+  "scan_method": "adaptive_staged_scanning",
+  "stage_completed": "B_module_priority_scanning"
+}
