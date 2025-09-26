@@ -49,3 +49,5 @@ pretrain_models/*
 
 # Ignore symbolic links
 *.lnk
+
+logs/
