@@ -24,7 +24,7 @@ import json
 
 __dir__ = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(__dir__)
-sys.path.insert(0, os.path.abspath(os.path.join(__dir__, "..")))
+sys.path.insert(0, os.path.abspath(os.path.join(__dir__, "..", "..")))
 
 os.environ["FLAGS_allocator_strategy"] = "auto_growth"
 
@@ -34,7 +34,7 @@ from ppocr.data import create_operators, transform
 from ppocr.modeling.architectures import build_model
 from ppocr.postprocess import build_post_process
 from ppocr.utils.save_load import load_model
-from ppocr.utils.utility import get_image_file_list
+from ppocr.utils.utility import get_image_file_list, get_image_file_list_from_configs
 import tools.program as program
 
 
@@ -135,10 +135,21 @@ def main():
 
     model.eval()
 
-    infer_imgs = config["Global"]["infer_img"]
-    infer_list = config["Global"].get("infer_list", None)
+    infer_imgs_config = config["Global"]["infer_img"]
+    infer_list_config = config["Global"].get("infer_list", None)
+
+    # Ensure infer_imgs_config is a list
+    if not isinstance(infer_imgs_config, list):
+        infer_imgs_config = [infer_imgs_config]
+    
+    # Ensure infer_list_config is a list
+    if infer_list_config is None:
+        infer_list_config = []
+    elif not isinstance(infer_list_config, list):
+        infer_list_config = [infer_list_config]
+
     with open(save_res_path, "w") as fout:
-        for file in get_image_file_list(infer_imgs, infer_list=infer_list):
+        for file in get_image_file_list_from_configs(infer_imgs_config, label_file_list=infer_list_config):
             logger.info("infer_img: {}".format(file))
             with open(file, "rb") as f:
                 img = f.read()
@@ -154,6 +165,9 @@ def main():
                 else:
                     data = {"image": img}
             batch = transform(data, ops)
+            if batch is None:
+                logger.debug("图像 {} 预处理失败，跳过此图像。".format(file))
+                continue
             if config["Architecture"]["algorithm"] == "SRN":
                 encoder_word_pos_list = np.expand_dims(batch[1], axis=0)
                 gsrm_word_pos_list = np.expand_dims(batch[2], axis=0)

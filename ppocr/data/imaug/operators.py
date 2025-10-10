@@ -586,7 +586,8 @@ class FilterByImageWidth(object):
         if not self._is_width_in_range(img_width):
             self.filtered_count += 1  # 增加过滤计数
             return None  # 不符合条件，返回None触发数据跳过
-            
+
+        # self.print_statistics()
         return data
 
     def _is_width_in_range(self, width):

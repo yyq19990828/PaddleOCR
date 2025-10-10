@@ -14,7 +14,22 @@ Global:
   checkpoints:
   save_inference_dir:
   use_visualdl: false
-  infer_img: datasets/boden_1th/plate/single/川/blue
+  infer_img: 
+    - ./datasets/boden_1th/
+    - ./datasets/boden_2th/
+    - ./datasets/ccpd_all/
+    - ./datasets/jlw_2023/
+    - ./datasets/sichuan2025/
+    - ./datasets/sichuan2025_2/
+    - ./datasets/suzhou_2023/
+  infer_list: 
+    - ./datasets/boden_1th/rec/val.txt
+    - ./datasets/boden_2th/rec/val.txt
+    - ./datasets/ccpd_all/rec/val.txt
+    - ./datasets/jlw_2023/rec/val.txt
+    - ./datasets/sichuan2025/rec/val.txt
+    - ./datasets/sichuan2025_2/rec/val.txt
+    - ./datasets/suzhou_2023/rec/val.txt
   # 字符集字典路径（修正为实际存在的文件）
   character_dict_path: ./datasets/chinese_plate_dict.txt
   max_text_length: &max_text_length 10
@@ -80,13 +95,29 @@ Train:
     name: MultiScaleDataSet
     ds_width: false
     data_dir: 
-    - ./datasets/output_multi/
-    - ./datasets/output_province/
+    # - ./datasets/output_multi/
+    # - ./datasets/output_province/
+    - ./datasets/boden_1th/
+    - ./datasets/boden_2th/
+    - ./datasets/ccpd_all/
+    - ./datasets/jlw_2023/
+    - ./datasets/sichuan2025/
+    - ./datasets/sichuan2025_2/
+    - ./datasets/suzhou_2023/
+    # - ./datasets/suzhou2022/
     ext_op_transform_idx: 1
     label_file_list:
   # 需要提供可直接打开的标注清单绝对/相对路径
-    - ./datasets/output_multi/rec/train.txt
-    - ./datasets/output_province/rec/train.txt
+    # - ./datasets/output_multi/rec/train.txt
+    # - ./datasets/output_province/rec/train.txt
+    - ./datasets/boden_1th/rec/train.txt
+    - ./datasets/boden_2th/rec/train.txt
+    - ./datasets/ccpd_all/rec/train.txt
+    - ./datasets/jlw_2023/rec/train.txt
+    - ./datasets/sichuan2025/rec/train.txt
+    - ./datasets/sichuan2025_2/rec/train.txt
+    - ./datasets/suzhou_2023/rec/train.txt
+    # - ./datasets/suzhou2022/rec/train.txt
     transforms:
     - DecodeImage:
         img_mode: BGR
@@ -118,15 +149,34 @@ Eval:
   dataset:
     name: SimpleDataSet
     data_dir: 
-    - ./datasets/output_multi/
-    - ./datasets/output_province/
+    # - ./datasets/output_multi/
+    # - ./datasets/output_province/
+    - ./datasets/boden_1th/
+    - ./datasets/boden_2th/
+    - ./datasets/ccpd_all/
+    - ./datasets/jlw_2023/
+    - ./datasets/sichuan2025/
+    - ./datasets/sichuan2025_2/
+    - ./datasets/suzhou_2023/
+    # - ./datasets/suzhou2022/
+    # 需要提供可直接打开的标注清单绝对/相对路径
     label_file_list:
-    - ./datasets/output_multi/rec/val.txt
-    - ./datasets/output_province/rec/val.txt
+    # - ./datasets/output_multi/rec/val.txt
+    # - ./datasets/output_province/rec/val.txt
+    - ./datasets/boden_1th/rec/val.txt
+    - ./datasets/boden_2th/rec/val.txt
+    - ./datasets/ccpd_all/rec/val.txt
+    - ./datasets/jlw_2023/rec/val.txt
+    - ./datasets/sichuan2025/rec/val.txt
+    - ./datasets/sichuan2025_2/rec/val.txt
+    - ./datasets/suzhou_2023/rec/val.txt
+    # - ./datasets/suzhou2022/rec/val.txt
     transforms:
     - DecodeImage:
         img_mode: BGR
         channel_first: false
+    - FilterByImageWidth:
+        width_range: [50, null]
     - MultiLabelEncode:
         gtc_encode: NRTRLabelEncode
     - RecResizeImg:

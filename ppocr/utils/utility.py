@@ -94,6 +94,117 @@ def get_image_file_list(img_file, infer_list=None):
     return imgs_lists
 
 
+def get_image_file_list_from_configs(data_dir_list, label_file_list):
+    all_imgs_lists = []
+    
+    # Handle the case where infer_list has only one element but infer_img has multiple
+    if len(label_file_list) == 1 and len(data_dir_list) > 1:
+        # Use the single label file with all data directories
+        label_file = label_file_list[0]
+        if not os.path.exists(label_file):
+            raise Exception("not found label file {}".format(label_file))
+
+        with open(label_file, "r") as f:
+            lines = f.readlines()
+
+        for line in lines:
+            image_paths_str = line.strip().split("\t")[0]
+            
+            # Handle cases where image_paths_str is a list-like string
+            if image_paths_str.startswith("[") and image_paths_str.endswith("]"):
+                try:
+                    # Safely evaluate the string as a Python list
+                    image_relative_paths = eval(image_paths_str)
+                    if isinstance(image_relative_paths, list) and len(image_relative_paths) > 0:
+                        image_relative_path = image_relative_paths[0] # Take the first one as per user's instruction
+                    else:
+                        print(f"Warning: Could not parse image path list from: {image_paths_str}")
+                        continue
+                except Exception as e:
+                    print(f"Warning: Error evaluating image path string '{image_paths_str}': {e}")
+                    image_relative_path = image_paths_str # Fallback to original string if parsing fails
+            else:
+                image_relative_path = image_paths_str
+
+            # Try each data directory to find the image
+            found = False
+            for base_dir in data_dir_list:
+                image_path = os.path.join(base_dir, image_relative_path)
+                if os.path.isfile(image_path) and _check_image_file(image_path):
+                    all_imgs_lists.append(image_path)
+                    found = True
+                    break
+            
+            if not found:
+                # If not found with any base_dir, try with image_relative_path as absolute path
+                if os.path.isfile(image_relative_path) and _check_image_file(image_relative_path):
+                    all_imgs_lists.append(image_relative_path)
+                else:
+                    # For debugging, print the components before joining
+                    print(f"Debug: data_dir_list='{data_dir_list}', image_relative_path='{image_relative_path}'")
+                    print(f"Warning: Image file not found in any data directory or as absolute path: {image_relative_path}")
+    else:
+        # Original logic for when lengths match or other cases
+        for i, label_file in enumerate(label_file_list):
+            if not os.path.exists(label_file):
+                raise Exception("not found label file {}".format(label_file))
+
+            with open(label_file, "r") as f:
+                lines = f.readlines()
+
+            for line in lines:
+                image_paths_str = line.strip().split("\t")[0]
+                
+                # Handle cases where image_paths_str is a list-like string
+                if image_paths_str.startswith("[") and image_paths_str.endswith("]"):
+                    try:
+                        # Safely evaluate the string as a Python list
+                        image_relative_paths = eval(image_paths_str)
+                        if isinstance(image_relative_paths, list) and len(image_relative_paths) > 0:
+                            image_relative_path = image_relative_paths[0] # Take the first one as per user's instruction
+                        else:
+                            print(f"Warning: Could not parse image path list from: {image_paths_str}")
+                            continue
+                    except Exception as e:
+                        print(f"Warning: Error evaluating image path string '{image_paths_str}': {e}")
+                        image_relative_path = image_paths_str # Fallback to original string if parsing fails
+                else:
+                    image_relative_path = image_paths_str
+
+                # Determine the base directory for the image
+                base_dir = ""
+                if len(data_dir_list) == 1:
+                    base_dir = data_dir_list[0]
+                elif len(data_dir_list) > i:
+                    base_dir = data_dir_list[i]
+                else:
+                    raise Exception(
+                        f"data_dir_list and label_file_list length mismatch or data_dir_list is empty. "
+                        f"data_dir_list length: {len(data_dir_list)}, current label_file index: {i}"
+                    )
+
+                # The image_relative_path should be relative to the base_dir
+                # No need to remove 't/' prefix if base_dir is correctly determined
+                
+                image_path = os.path.join(base_dir, image_relative_path)
+                if os.path.isfile(image_path) and _check_image_file(image_path):
+                    all_imgs_lists.append(image_path)
+                else:
+                    # If not found with base_dir, try with image_relative_path as absolute path
+                    # This handles cases where image_relative_path might already be an absolute path
+                    if os.path.isfile(image_relative_path) and _check_image_file(image_relative_path):
+                        all_imgs_lists.append(image_relative_path)
+                    else:
+                        # For debugging, print the components before joining
+                        print(f"Debug: base_dir='{base_dir}', image_relative_path='{image_relative_path}'")
+                        print(f"Warning: Image file not found: {image_path} (from base_dir) or {image_relative_path} (as absolute path)")
+
+    if len(all_imgs_lists) == 0:
+        raise Exception("not found any img file from the provided configs")
+    all_imgs_lists = sorted(list(set(all_imgs_lists))) # Use set to remove duplicates, then sort
+    return all_imgs_lists
+
+
 def binarize_img(img):
     if len(img.shape) == 3 and img.shape[2] == 3:
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # conversion to grayscale image
