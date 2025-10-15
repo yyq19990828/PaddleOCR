@@ -1,0 +1,201 @@
+Global:
+  model_name: PP-OCRv5_mobile_rec # To use static model for inference.
+  debug: false
+  use_gpu: true
+  epoch_num: 100
+  log_smooth_window: 20
+  print_batch_step: 10
+  save_model_dir: ./output_train/PP-OCRv5_mobile_rec
+  save_epoch_step: 1
+  eval_batch_step: [0, 500] #2000 表示每2000次迭代评估一次，[1000， 2000]表示从1000次迭代开始，每2000次评估一次
+  cal_metric_during_train: true
+  calc_epoch_interval: 1
+  pretrained_model: 
+  checkpoints:
+  save_inference_dir:
+  use_visualdl: false
+  infer_img: 
+    - ./datasets/boden_1th/
+    - ./datasets/boden_2th/
+    - ./datasets/ccpd_all/
+    - ./datasets/jlw_2023/
+    - ./datasets/sichuan2025/
+    - ./datasets/sichuan2025_2/
+    - ./datasets/suzhou_2023/
+  infer_list: 
+    - ./datasets/boden_1th/rec/val.txt
+    - ./datasets/boden_2th/rec/val.txt
+    - ./datasets/ccpd_all/rec/val.txt
+    - ./datasets/jlw_2023/rec/val.txt
+    - ./datasets/sichuan2025/rec/val.txt
+    - ./datasets/sichuan2025_2/rec/val.txt
+    - ./datasets/suzhou_2023/rec/val.txt
+  # 字符集字典路径（修正为实际存在的文件）
+  character_dict_path: ./datasets/chinese_plate_dict.txt
+  max_text_length: &max_text_length 10
+  infer_mode: false
+  use_space_char: false
+  distributed: true
+  save_res_path: ./output/rec/predicts_ppocrv5.txt
+  d2s_train_image_shape: [3, 48, 320]
+
+
+Optimizer:
+  name: Adam
+  beta1: 0.9
+  beta2: 0.999
+  lr:
+    name: Cosine
+    learning_rate: 0.0005
+    warmup_epoch: 5
+  regularizer:
+    name: L2
+    factor: 3.0e-05
+
+
+Architecture:
+  model_type: rec
+  algorithm: SVTR_LCNet
+  Transform:
+  Backbone:
+    name: PPLCNetV3
+    scale: 0.95
+  Head:
+    name: MultiHead
+    head_list:
+      - CTCHead:
+          Neck:
+            name: svtr
+            dims: 120
+            depth: 2
+            hidden_dims: 120
+            kernel_size: [1, 3]
+            use_guide: True
+          Head:
+            fc_decay: 0.00001
+      - NRTRHead:
+          nrtr_dim: 384
+          max_text_length: *max_text_length
+
+Loss:
+  name: MultiLoss
+  loss_config_list:
+    - CTCLoss:
+    - NRTRLoss:
+
+PostProcess:  
+  name: CTCLabelDecode
+
+Metric:
+  name: RecMetric
+  main_indicator: acc
+
+Train:
+  dataset:
+    name: MultiScaleDataSet
+    ds_width: false
+    data_dir: 
+    # - ./datasets/output_multi/
+    # - ./datasets/output_province/
+    - ./datasets/boden_1th/
+    - ./datasets/boden_2th/
+    - ./datasets/ccpd_all/
+    - ./datasets/jlw_2023/
+    - ./datasets/sichuan2025/
+    - ./datasets/sichuan2025_2/
+    - ./datasets/suzhou_2023/
+    # - ./datasets/suzhou2022/
+    ext_op_transform_idx: 1
+    label_file_list:
+  # 需要提供可直接打开的标注清单绝对/相对路径
+    # - ./datasets/output_multi/rec/train.txt
+    # - ./datasets/output_province/rec/train.txt
+    - ./datasets/boden_1th/rec/train.txt
+    - ./datasets/boden_2th/rec/train.txt
+    - ./datasets/ccpd_all/rec/train.txt
+    - ./datasets/jlw_2023/rec/train.txt
+    - ./datasets/sichuan2025/rec/train.txt
+    - ./datasets/sichuan2025_2/rec/train.txt
+    - ./datasets/suzhou_2023/rec/train.txt
+    # - ./datasets/suzhou2022/rec/train.txt
+    transforms:
+    - DecodeImage:
+        img_mode: BGR
+        channel_first: false
+    - RecConAug:
+        prob: 0.5
+        ext_data_num: 2
+        image_shape: [48, 320, 3]
+        max_text_length: *max_text_length
+    - RecAug:
+    - MultiLabelEncode:
+        gtc_encode: NRTRLabelEncode
+    - KeepKeys:
+        keep_keys:
+        - image
+        - label_ctc
+        - label_gtc
+        - length
+        - valid_ratio
+  sampler:
+    name: MultiScaleSampler
+    scales: [[320, 32], [320, 48], [320, 64]]
+    first_bs: &bs 128
+    fix_bs: false
+    divided_factor: [8, 16] # w, h
+    is_training: True
+  loader:
+    shuffle: true
+    batch_size_per_card: *bs
+    drop_last: true
+    num_workers: 4
+    use_shared_memory: false
+Eval:
+  dataset:
+    name: SimpleDataSet
+    data_dir: 
+    # - ./datasets/output_multi/
+    # - ./datasets/output_province/
+    - ./datasets/boden_1th/
+    - ./datasets/boden_2th/
+    - ./datasets/ccpd_all/
+    - ./datasets/jlw_2023/
+    - ./datasets/sichuan2025/
+    - ./datasets/sichuan2025_2/
+    - ./datasets/suzhou_2023/
+    # - ./datasets/suzhou2022/
+    # 需要提供可直接打开的标注清单绝对/相对路径
+    label_file_list:
+    # - ./datasets/output_multi/rec/val.txt
+    # - ./datasets/output_province/rec/val.txt
+    - ./datasets/boden_1th/rec/val.txt
+    - ./datasets/boden_2th/rec/val.txt
+    - ./datasets/ccpd_all/rec/val.txt
+    - ./datasets/jlw_2023/rec/val.txt
+    - ./datasets/sichuan2025/rec/val.txt
+    - ./datasets/sichuan2025_2/rec/val.txt
+    - ./datasets/suzhou_2023/rec/val.txt
+    # - ./datasets/suzhou2022/rec/val.txt
+    transforms:
+    - DecodeImage:
+        img_mode: BGR
+        channel_first: false
+    - FilterByImageWidth:
+        width_range: [50, null]
+    - MultiLabelEncode:
+        gtc_encode: NRTRLabelEncode
+    - RecResizeImg:
+        image_shape: [3, 48, 320]
+    - KeepKeys:
+        keep_keys:
+        - image
+        - label_ctc
+        - label_gtc
+        - length
+        - valid_ratio
+  loader:
+    shuffle: false
+    drop_last: false
+    batch_size_per_card: 128
+    num_workers: 4
+    use_shared_memory: false

@@ -166,7 +166,7 @@ def main():
                     data = {"image": img}
             batch = transform(data, ops)
             if batch is None:
-                logger.debug("图像 {} 预处理失败，跳过此图像。".format(file))
+                logger.debug("图像 {} 长度低于指定像素值, 跳过此图像。".format(file))
                 continue
             if config["Architecture"]["algorithm"] == "SRN":
                 encoder_word_pos_list = np.expand_dims(batch[1], axis=0)
