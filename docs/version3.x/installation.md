@@ -51,13 +51,13 @@ nvidia-docker run --name paddleocr -v $PWD:/paddle --shm-size=8G --network=host 
 
 ```bash
 # CPU 版本
-python -m pip install paddlepaddle==3.0.0 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
+python -m pip install paddlepaddle==3.2.0 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
 
 # GPU 版本，需显卡驱动程序版本 ≥450.80.02（Linux）或 ≥452.39（Windows）
-python -m pip install paddlepaddle-gpu==3.0.0 -i https://www.paddlepaddle.org.cn/packages/stable/cu118/
+python -m pip install paddlepaddle-gpu==3.2.0 -i https://www.paddlepaddle.org.cn/packages/stable/cu118/
 
 # GPU 版本，需显卡驱动程序版本 ≥550.54.14（Linux）或 ≥550.54.14（Windows）
- python -m pip install paddlepaddle-gpu==3.0.0 -i https://www.paddlepaddle.org.cn/packages/stable/cu126/
+ python -m pip install paddlepaddle-gpu==3.2.0 -i https://www.paddlepaddle.org.cn/packages/stable/cu126/
 ```
 
 > ❗ <b>注</b>：无需关注物理机上的 CUDA 版本，只需关注显卡驱动程序版本。更多飞桨 Wheel 版本请参考[飞桨官网](https://www.paddlepaddle.org.cn/install/quick?docurl=/documentation/docs/zh/install/pip/linux-pip.html)。
@@ -71,7 +71,7 @@ python -c "import paddle; print(paddle.__version__)"
 如果已安装成功，将输出以下内容：
 
 ```bash
-3.0.0
+3.2.0
 ```
 
 ## 1.3 Windows 系统适配 NVIDIA 50 系显卡的 PaddlePaddle wheel 包安装
@@ -96,7 +96,7 @@ python -m https://paddle-qa.bj.bcebos.com/paddle-pipeline/Develop-TagBuild-Train
 
 # 2. 安装 PaddleOCR
 
-如果只希望使用 PaddleOCR 的推理功能，请参考 [安装推理包](#21-安装推理包)；如果希望进行模型训练、导出等，请参考 [安装训练依赖](#22-安装训练依赖)。在同一环境中安装推理包和训练依赖是允许的，无需进行环境隔离。
+如果只希望使用 PaddleOCR 的推理功能，请参考 [安装推理包](#21)；如果希望进行模型训练、导出等，请参考 [安装训练依赖](#22)。在同一环境中安装推理包和训练依赖是允许的，无需进行环境隔离。
 
 ## 2.1 安装推理包
 

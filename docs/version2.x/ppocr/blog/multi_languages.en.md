@@ -13,7 +13,7 @@ typora-copy-images-to: images
 
 PaddleOCR aims to create a rich, leading, and practical OCR tool library, which not only provides
 Chinese and English models in general scenarios, but also provides models specifically trained
-in English scenarios. And multilingual models covering [80 languages](#language_abbreviations).
+in English scenarios. And multilingual models covering [80 languages](#5-support-languages-and-abbreviations).
 
 Among them, the English model supports the detection and recognition of uppercase and lowercase
 letters and common punctuation, and the recognition of space characters is optimized:
@@ -70,7 +70,7 @@ paddleocr -h
 - Whole image prediction (detection + recognition)
 
 PaddleOCR currently supports 80 languages, which can be specified by the --lang parameter.
-The supported languages are listed in the [table](#language_abbreviations).
+The supported languages are listed in the [table](#5-support-languages-and-abbreviations).
 
 ``` bash
 paddleocr --image_dir doc/imgs_en/254.jpg --lang=en
@@ -157,15 +157,15 @@ Visualization of results:
 
 ![img](./images/korean.jpg)
 
-PPOCR also supports direction classification. For more detailed usage, please refer to: [whl package instructions](whl_en.md).
+PPOCR also supports direction classification. For more detailed usage, please refer to: [whl package instructions](whl.en.md).
 
 ## 3 Custom training
 
-PPOCR supports using your own data for custom training or fine-tune, where the recognition model can refer to [French configuration file](https://github.com/PaddlePaddle/PaddleOCR/tree/main/configs/rec/multi_language/rec_french_lite_train.yml)
+PPOCR supports using your own data for custom training or fine-tune, where the recognition model can refer to [French configuration file](../../../../configs/rec/multi_language/rec_french_lite_train.yml)
 Modify the training data path, dictionary and other parameters.
 
-For specific data preparation and training process, please refer to: [Text Detection](../doc_en/detection_en.md), [Text Recognition](../doc_en/recognition_en.md), more functions such as predictive deployment,
-For functions such as data annotation, you can read the complete [Document Tutorial](../../README.md).
+For specific data preparation and training process, please refer to: [Text Detection](../../ppocr/model_train/detection.en.md), [Text Recognition](../../ppocr/model_train/recognition.en.md), more functions such as predictive deployment,
+For functions such as data annotation, you can read the complete [Document Tutorial](../../../index/index.en.md).
 
 ## 4 Inference and Deployment
 
@@ -173,11 +173,11 @@ In addition to installing the whl package for quick forecasting,
 PPOCR also provides a variety of forecasting deployment methods.
 If necessary, you can read related documents:
 
-- [Python Inference](./inference_ppocr_en.md)
-- [C++ Inference](../../deploy/cpp_infer/readme.md)
-- [Serving](../../deploy/hubserving/readme_en.md)
-- [Mobile](../../deploy/lite/readme.md)
-- [Benchmark](./benchmark_en.md)
+- [Python Inference](../../legacy/python_infer.en.md)
+- [C++ Inference](../../legacy/cpp_infer.en.md)
+- [Serving](../../../../deploy/hubserving/readme_en.md)
+- [Mobile](../../../../deploy/lite/readme.md)
+- [Benchmark](../../legacy/benchmark.en.md)
 
 ## 5 Support languages and abbreviations
 

@@ -51,13 +51,13 @@ nvidia-docker run --name paddleocr -v $PWD:/paddle  --shm-size=8G --network=host
 
 ```bash
 # CPU
-python -m pip install paddlepaddle==3.0.0 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
+python -m pip install paddlepaddle==3.2.0 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
 
 # gpu，requires GPU driver version ≥450.80.02 (Linux) or ≥452.39 (Windows)
- python -m pip install paddlepaddle-gpu==3.0.0 -i https://www.paddlepaddle.org.cn/packages/stable/cu118/
+ python -m pip install paddlepaddle-gpu==3.2.0 -i https://www.paddlepaddle.org.cn/packages/stable/cu118/
 
 # gpu，requires GPU driver version ≥550.54.14 (Linux) or ≥550.54.14 (Windows)
- python -m pip install paddlepaddle-gpu==3.0.0 -i https://www.paddlepaddle.org.cn/packages/stable/cu126/
+ python -m pip install paddlepaddle-gpu==3.2.0 -i https://www.paddlepaddle.org.cn/packages/stable/cu126/
 ```
 
 
@@ -71,7 +71,7 @@ python -c "import paddle; print(paddle.__version__)"
 If the installation is successful, the following content will be output:
 
 ```bash
-3.0.0
+3.2.0
 ```
 
 ## 1.3 Installation of PaddlePaddle Wheel Package for Windows with NVIDIA 50 Series GPUs

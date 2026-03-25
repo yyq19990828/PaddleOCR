@@ -108,6 +108,16 @@ plugins:
             PP-StructureV3简介: PP-StructureV3 Introduction
             PP-ChatOCRv4: PP-ChatOCRv4
             PP-ChatOCRv4简介: PP-ChatOCRv4 Introduction
+            PaddleOCR-VL: PaddleOCR-VL
+            PaddleOCR-VL-1.5简介: PaddleOCR-VL-1.5 Introduction
+            PaddleOCR-VL简介: PaddleOCR-VL Introduction
+            PaddleOCR-VL NVIDIA Blackwell 架构 GPU 使用教程: PaddleOCR-VL NVIDIA Blackwell-Architecture GPUs Usage Tutorial
+            PaddleOCR-VL 昆仑芯 XPU 使用教程: PaddleOCR-VL Kunlunxin XPU Usage Tutorial
+            PaddleOCR-VL 海光 DCU 使用教程: PaddleOCR-VL Hygon DCU Usage Tutorial
+            PaddleOCR-VL 沐曦 GPU 使用教程: PaddleOCR-VL MetaX GPU Usage Tutorial
+            PaddleOCR-VL 天数 GPU 使用教程: PaddleOCR-VL Iluvatar GPU Usage Tutorial
+            PaddleOCR-VL 华为昇腾 NPU 使用教程: PaddleOCR-VL Huawei Ascend NPU Usage Tutorial
+            PaddleOCR-VL Apple Silicon 使用教程: PaddleOCR-VL Apple Silicon Usage Tutorial
             推理部署: Model Deploy
             高性能推理: High-Performance Inference
             打包PaddleOCR项目: Package PaddleOCR Projects
@@ -119,6 +129,7 @@ plugins:
             文档类视觉语言模型模块: Document Visual Language Model Module
             公式识别模块: Formula Recognition Module
             版面区域检测模块: Layout Detection
+            版面分析模块: Layout Analysis
             印章文本检测模块: Seal Text Detection
             表格单元格检测模块: Table Cell Detection Module
             表格分类模块: Table Classification Module
@@ -134,6 +145,7 @@ plugins:
             印章文本识别产线: Seal Text Recognition Pipeline
             通用表格识别v2产线: General Table Recognition v2 Pipeline
             图表解析模块: Chart Parsing Module
+            PaddleOCR-VL产线: PaddleOCR-VL Pipeline
             多硬件使用: Multi-Devices Usage
             PaddleOCR 多硬件使用指南: PaddleOCR Multi-Devices Usage Guide
             昇腾 NPU 飞桨安装教程: Ascend NPU PaddlePaddle Installation Tutorial
@@ -158,7 +170,7 @@ plugins:
             基于Python预测引擎推理: Python Inference
             基于C++预测引擎推理: CPP Inference
             Visual Studio 2019 Community CMake 编译指南: Visual Studio 2019 Community CMake Compilation Guide
-            服务化部署: Sever Deployment
+            服务化部署: Server Deployment
             端侧部署: On-Device Deployment
             Android部署: Android Deployment
             Paddle2ONNX模型转化与预测: Paddle2ONNX
@@ -206,10 +218,12 @@ plugins:
         #   build: false
         #   fixed_link: "https://github.com/PaddlePaddle/PaddleOCR/discussions/13374"
   - git-committers:
+      enabled: !ENV [ENABLE_GIT_PLUGINS, true]
       repository: PaddlePaddle/PaddleOCR
       branch: main
       token: !!python/object/apply:os.getenv ["MKDOCS_GIT_COMMITTERS_APIKEY"]
   - git-revision-date-localized:
+      enabled: !ENV [ENABLE_GIT_PLUGINS, true]
       enable_creation_date: true
       timezone: Asia/Shanghai
       type: iso_datetime
@@ -221,6 +235,7 @@ plugins:
 markdown_extensions:
   - abbr
   - attr_list
+  - callouts
   - pymdownx.snippets
   - pymdownx.critic
   - pymdownx.caret
@@ -290,6 +305,17 @@ nav:
   - PP-ChatOCRv4:
     - 使用教程: version3.x/pipeline_usage/PP-ChatOCRv4.md
     - PP-ChatOCRv4简介: version3.x/algorithm/PP-ChatOCRv4/PP-ChatOCRv4.md
+  - PaddleOCR-VL:
+    - 使用教程: version3.x/pipeline_usage/PaddleOCR-VL.md
+    - PaddleOCR-VL-1.5简介: version3.x/algorithm/PaddleOCR-VL/PaddleOCR-VL-1.5.md
+    - PaddleOCR-VL简介: version3.x/algorithm/PaddleOCR-VL/PaddleOCR-VL.md
+    - PaddleOCR-VL NVIDIA Blackwell 架构 GPU 使用教程: version3.x/pipeline_usage/PaddleOCR-VL-NVIDIA-Blackwell.md
+    - PaddleOCR-VL 昆仑芯 XPU 使用教程: version3.x/pipeline_usage/PaddleOCR-VL-Kunlunxin-XPU.md
+    - PaddleOCR-VL 海光 DCU 使用教程: version3.x/pipeline_usage/PaddleOCR-VL-Hygon-DCU.md
+    - PaddleOCR-VL 沐曦 GPU 使用教程: version3.x/pipeline_usage/PaddleOCR-VL-MetaX-GPU.md
+    - PaddleOCR-VL 天数 GPU 使用教程: version3.x/pipeline_usage/PaddleOCR-VL-Iluvatar-GPU.md
+    - PaddleOCR-VL 华为昇腾 NPU 使用教程: version3.x/pipeline_usage/PaddleOCR-VL-Huawei-Ascend-NPU.md
+    - PaddleOCR-VL Apple Silicon 使用教程: version3.x/pipeline_usage/PaddleOCR-VL-Apple-Silicon.md
   - 推理部署:
     - 高性能推理: version3.x/deployment/high_performance_inference.md
     - 获取ONNX模型: version3.x/deployment/obtaining_onnx_models.md
@@ -309,6 +335,7 @@ nav:
     - 文档类视觉语言模型模块: version3.x/module_usage/doc_vlm.md
     - 公式识别模块: version3.x/module_usage/formula_recognition.md
     - 版面区域检测模块: version3.x/module_usage/layout_detection.md
+    - 版面分析模块: version3.x/module_usage/layout_analysis.md
     - 印章文本检测模块: version3.x/module_usage/seal_text_detection.md
     - 表格单元格检测模块: version3.x/module_usage/table_cells_detection.md
     - 表格分类模块: version3.x/module_usage/table_classification.md

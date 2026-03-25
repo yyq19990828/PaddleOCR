@@ -8,15 +8,15 @@ comments: true
     - [Environment Preparation](#environment-preparation)
     - [Deployment Steps](#deployment-steps)
 - [Code Introduction](#code-introduction)
-- [Project Explanation](#project-explanation)
+- [Project Explanation](#engineering-details)
 - [Advanced Usage](#advanced-usage)
-    - [Update Prediction Library](#update-prediction-library) 
-    - [Convert NB Model](#convert-nb-model) 
-    - [Update Model, Label File, and Prediction Image](#update-model-label-file-and-prediction-image)
-        - [Update Model](#update-model)
-        - [Update Label File](#update-label-file)
-        - [Update Prediction Image](#update-prediction-image)
-    - [Update Input/Output Preprocessing](#update-inputoutput-preprocessing)
+    - [Update Prediction Library](#updating-the-prediction-library)
+    - [Convert NB Model](#converting-nb-models)
+    - [Update Model, Label File, and Prediction Image](#updating-models-label-files-and-prediction-images)
+        - [Update Model](#updating-models)
+        - [Update Label File](#updating-label-files)
+        - [Update Prediction Image](#updating-prediction-images)
+    - [Update Input/Output Preprocessing](#updating-inputoutput-preprocessing)
 
 This guide mainly introduces how to run the PaddleX on-device deployment demo for OCR text recognition on an Android shell.
 
@@ -196,7 +196,7 @@ The detection visualized image saved in ./test_img_result.jpg
 **Remarks**:
 
  - The `PaddleX-Lite-Deploy/ocr/assets/labels/` directory contains the dictionary files `ppocr_keys_v1.txt` for PP-OCRv3 and PP-OCRv4 models, and `ppocr_keys_ocrv5.txt` for the PP-OCRv5 model. The appropriate dictionary file is automatically selected during inference based on the model name, so no manual intervention is required.
- - If you are using an English/numeric or other language model, you need to replace it with the corresponding language dictionary. The PaddleOCR repository provides [some dictionary files](https://github.com/PaddlePaddle/PaddleOCR/tree/release/2.3/ppocr/utils).
+ - If you are using an English/numeric or other language model, you need to replace it with the corresponding language dictionary. The PaddleOCR repository provides [some dictionary files](../../../ppocr/utils).
 
 ```shell
 # Parameters of the executable in run.sh script:

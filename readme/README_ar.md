@@ -12,7 +12,7 @@
 
 [![stars](https://img.shields.io/github/stars/PaddlePaddle/PaddleOCR?color=ccf)](https://github.com/PaddlePaddle/PaddleOCR)
 [![Downloads](https://img.shields.io/pypi/dm/paddleocr)](https://pypi.org/project/PaddleOCR/)
-![python](https://img.shields.io/badge/python-3.8～3.12-aff.svg)
+![python](https://img.shields.io/badge/python-3.8～3.13-aff.svg)
 ![os](https://img.shields.io/badge/os-linux%2C%20win%2C%20mac-pink.svg)
 ![hardware](https://img.shields.io/badge/hardware-cpu%2C%20gpu%2C%20xpu%2C%20npu-yellow.svg)
 
@@ -29,7 +29,7 @@
 ## 🚀 مقدمة
 منذ إصداره الأولي، حظي PaddleOCR بتقدير واسع النطاق في الأوساط الأكاديمية والصناعية والبحثية، بفضل خوارزمياته المتطورة وأدائه المثبت في تطبيقات العالم الحقيقي. وهو يدعم بالفعل مشاريع مفتوحة المصدر شهيرة مثل Umi-OCR، و OmniParser، و MinerU، و RAGFlow، مما يجعله مجموعة أدوات التعرف الضوئي على الحروف المفضلة للمطورين في جميع أنحاء العالم.
 
-في 20 مايو 2025، كشف فريق PaddlePaddle عن PaddleOCR 3.0، المتوافق تمامًا مع الإصدار الرسمي لإطار العمل **PaddlePaddle 3.0**. يعزز هذا التحديث **دقة التعرف على النصوص**، ويضيف دعمًا لـ **التعرف على أنواع نصوص متعددة** و **التعرف على الكتابة اليدوية**، ويلبي الطلب المتزايد من التطبيقات القائمة على النماذج الكبيرة على **التحليل عالي الدقة للمستندات المعقدة**. عند دمجه مع **ERNIE 4.5**، فإنه يعزز بشكل كبير دقة استخراج المعلومات الرئيسية. كما يقدم PaddleOCR 3.0 دعمًا لمسرعات الذكاء الاصطناعي الصينية غير المتجانسة مثل **KUNLUNXIN** و **Ascend**. للحصول على وثائق الاستخدام الكاملة، يرجى الرجوع إلى [وثائق PaddleOCR 3.0](https://paddlepaddle.github.io/PaddleOCR/latest/en/index.html).
+في 20 مايو 2025، كشف فريق PaddlePaddle عن PaddleOCR 3.0، المتوافق تمامًا مع الإصدار الرسمي لإطار العمل **PaddlePaddle 3.0**. يعزز هذا التحديث **دقة التعرف على النصوص**، ويضيف دعمًا لـ **التعرف على أنواع نصوص متعددة** و **التعرف على الكتابة اليدوية**، ويلبي الطلب المتزايد من التطبيقات القائمة على النماذج الكبيرة على **التحليل عالي الدقة للمستندات المعقدة**. عند دمجه مع **ERNIE 4.5**، فإنه يعزز بشكل كبير دقة استخراج المعلومات الرئيسية. كما يقدم PaddleOCR 3.0 دعمًا لمسرعات الذكاء الاصطناعي الصينية غير المتجانسة مثل **Kunlunxin** و **Ascend**. للحصول على وثائق الاستخدام الكاملة، يرجى الرجوع إلى [وثائق PaddleOCR 3.0](https://paddlepaddle.github.io/PaddleOCR/latest/en/index.html).
 
 ##### ثلاث ميزات رئيسية جديدة في PaddleOCR 3.0:
 نموذج التعرف على النصوص في جميع السيناريوهات [PP-OCRv5](../docs/version3.x/algorithm/PP-OCRv5/PP-OCRv5.en.md): نموذج واحد يعالج خمسة أنواع مختلفة من النصوص بالإضافة إلى الكتابة اليدوية المعقدة. زادت دقة التعرف الإجمالية بمقدار 13 نقطة مئوية عن الجيل السابق. [تجربة مباشرة](https://aistudio.baidu.com/community/app/91660/webUI)
@@ -312,7 +312,7 @@ python -m pip install paddleocr
 
 | اسم مجموعة التبعيات   | الوظيفة المقابلة |
 | -                     | -               |
-| `doc-parser`          | تحليل المستندات: يمكن استخدامها لاستخراج عناصر التخطيط مثل الجداول، الصيغ، الأختام، الصور، إلخ من المستندات؛ تشمل نماذج مثل PP-StructureV3 |
+| `doc-parser`          | تحليل المستندات: يمكن استخدامه لاستخراج عناصر التخطيط مثل الجداول، الصيغ، الأختام، الصور، وغيرها من المستندات؛ ويشمل نماذج مثل PP-StructureV3 وPaddleOCR-VL. |
 | `ie`                  | استخراج المعلومات: يمكن استخدامها لاستخراج المعلومات الرئيسية مثل الأسماء، التواريخ، العناوين، المبالغ، إلخ من المستندات؛ تشمل نماذج مثل PP-ChatOCRv4 |
 | `trans`               | ترجمة المستندات: يمكن استخدامها لترجمة المستندات من لغة إلى أخرى؛ تشمل نماذج مثل PP-DocTranslation |
 | `all`                 | جميع الميزات الكاملة      |
@@ -465,7 +465,7 @@ print(chat_result)
 ## مسرّعات الذكاء الاصطناعي الصينية غير المتجانسة
 <ul dir="rtl">
   <li><a href="https://paddlepaddle.github.io/PaddleOCR/latest/version3.x/other_devices_support/paddlepaddle_install_NPU.html">Huawei Ascend</a></li>
-  <li><a href="https://paddlepaddle.github.io/PaddleOCR/latest/version3.x/other_devices_support/paddlepaddle_install_XPU.html">KUNLUNXIN</a></li>
+  <li><a href="https://paddlepaddle.github.io/PaddleOCR/latest/version3.x/other_devices_support/paddlepaddle_install_XPU.html">Kunlunxin</a></li>
 </ul>
 
 ## ⛰️ دروس متقدمة
@@ -516,8 +516,10 @@ print(chat_result)
 | اسم المشروع | الوصف |
 | ------------ | ----------- |
 | [RAGFlow](https://github.com/infiniflow/ragflow) <a href="https://github.com/infiniflow/ragflow"><img src="https://img.shields.io/github/stars/infiniflow/ragflow"></a>|محرك RAG يعتمد على فهم عميق للوثائق.|
+| [pathway](https://github.com/pathwaycom/pathway) <a href="https://github.com/pathwaycom/pathway"><img src="https://img.shields.io/github/stars/pathwaycom/pathway"></a>|إطار عمل ETL بلغة بايثون لمعالجة التدفق، التحليل الفوري، خطوط أنابيب LLM وRAG.|
 | [MinerU](https://github.com/opendatalab/MinerU) <a href="https://github.com/opendatalab/MinerU"><img src="https://img.shields.io/github/stars/opendatalab/MinerU"></a>|أداة تحويل المستندات متعددة الأنواع إلى Markdown|
 | [Umi-OCR](https://github.com/hiroi-sora/Umi-OCR) <a href="https://github.com/hiroi-sora/Umi-OCR"><img src="https://img.shields.io/github/stars/hiroi-sora/Umi-OCR"></a>|برنامج OCR مجاني ومفتوح المصدر للعمل دفعة واحدة دون اتصال بالإنترنت.|
+| [cherry-studio](https://github.com/CherryHQ/cherry-studio) <a href="https://github.com/CherryHQ/cherry-studio"><img src="https://img.shields.io/github/stars/CherryHQ/cherry-studio"></a>|عميل سطح مكتب يدعم عدة مزودي LLM.|
 | [OmniParser](https://github.com/microsoft/OmniParser)<a href="https://github.com/microsoft/OmniParser"><img src="https://img.shields.io/github/stars/microsoft/OmniParser"></a> |أداة OmniParser: أداة تحليل الشاشة لوكيل واجهة المستخدم الرسومية المستند إلى الرؤية البحتة.|
 | [QAnything](https://github.com/netease-youdao/QAnything)<a href="https://github.com/netease-youdao/QAnything"><img src="https://img.shields.io/github/stars/netease-youdao/QAnything"></a> |نظام سؤال وجواب يعتمد على أي شيء.|
 | [PDF-Extract-Kit](https://github.com/opendatalab/PDF-Extract-Kit) <a href="https://github.com/opendatalab/PDF-Extract-Kit"><img src="https://img.shields.io/github/stars/opendatalab/PDF-Extract-Kit"></a>|مجموعة أدوات قوية مفتوحة المصدر مصممة لاستخراج محتوى عالي الجودة بكفاءة من مستندات PDF المعقدة والمتنوعة.|
@@ -543,11 +545,24 @@ print(chat_result)
 
 ## 🎓 الاستشهاد الأكاديمي
 
-```
-@misc{paddleocr2020,
-title={PaddleOCR, Awesome multilingual OCR toolkits based on PaddlePaddle.},
-author={PaddlePaddle Authors},
-howpublished = {\url{https://github.com/PaddlePaddle/PaddleOCR}},
-year={2020}
+```bibtex
+@misc{cui2025paddleocr30technicalreport,
+      title={PaddleOCR 3.0 Technical Report}, 
+      author={Cheng Cui and Ting Sun and Manhui Lin and Tingquan Gao and Yubo Zhang and Jiaxuan Liu and Xueqing Wang and Zelun Zhang and Changda Zhou and Hongen Liu and Yue Zhang and Wenyu Lv and Kui Huang and Yichao Zhang and Jing Zhang and Jun Zhang and Yi Liu and Dianhai Yu and Yanjun Ma},
+      year={2025},
+      eprint={2507.05595},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2507.05595}, 
+}
+
+@misc{cui2025paddleocrvlboostingmultilingualdocument,
+      title={PaddleOCR-VL: Boosting Multilingual Document Parsing via a 0.9B Ultra-Compact Vision-Language Model}, 
+      author={Cheng Cui and Ting Sun and Suyin Liang and Tingquan Gao and Zelun Zhang and Jiaxuan Liu and Xueqing Wang and Changda Zhou and Hongen Liu and Manhui Lin and Yue Zhang and Yubo Zhang and Handong Zheng and Jing Zhang and Jun Zhang and Yi Liu and Dianhai Yu and Yanjun Ma},
+      year={2025},
+      eprint={2510.14528},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2510.14528}, 
 }
 ```
